@@ -1,9 +1,0 @@
-/home/triansh/Desktop/CGA1/among us opengl/build/CMakeFiles/rebuild_cache.dir
-/home/triansh/Desktop/CGA1/among us opengl/build/CMakeFiles/edit_cache.dir
-/home/triansh/Desktop/CGA1/among us opengl/build/CMakeFiles/glad.dir
-/home/triansh/Desktop/CGA1/among us opengl/build/CMakeFiles/AmongUs.dir
-/home/triansh/Desktop/CGA1/among us opengl/build/libraries/glfw/CMakeFiles/rebuild_cache.dir
-/home/triansh/Desktop/CGA1/among us opengl/build/libraries/glfw/CMakeFiles/edit_cache.dir
-/home/triansh/Desktop/CGA1/among us opengl/build/libraries/glfw/src/CMakeFiles/rebuild_cache.dir
-/home/triansh/Desktop/CGA1/among us opengl/build/libraries/glfw/src/CMakeFiles/edit_cache.dir
-/home/triansh/Desktop/CGA1/among us opengl/build/libraries/glfw/src/CMakeFiles/glfw.dir
