@@ -11,6 +11,7 @@
 
 #include "game.h"
 #include "resourceManager.h"
+#include "window.h"
 
 #include <iostream>
 
@@ -19,10 +20,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
-// The Width of the screen
-const unsigned int SCREEN_WIDTH = 1600;
-// The height of the screen
-const unsigned int SCREEN_HEIGHT = 800;
+
 
 Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 

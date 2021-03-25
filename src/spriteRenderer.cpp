@@ -9,8 +9,9 @@
 #include "spriteRenderer.h"
 
 
-SpriteRenderer::SpriteRenderer(Shader &shader) {
+SpriteRenderer::SpriteRenderer(Shader &shader, bool skew) {
     this->shader = shader;
+    this->skew = skew;
     this->initRenderData();
 }
 
@@ -49,23 +50,41 @@ void SpriteRenderer::DrawSprite(Sprite *sp) {
 void SpriteRenderer::initRenderData() {
     // configure VAO/VBO
     unsigned int VBO;
-    float vertices[] = {
-            // pos      // tex
-            0.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 0.0f,
-
-            0.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 1.0f, 0.0f
-    };
-
     glGenVertexArrays(1, &this->quadVAO);
     glGenBuffers(1, &VBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    if (skew) {
+        float vertices[] = {
+                // pos      // tex
+                0.0f, 1.0f, 0.0f, 1.0f,
+                1.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 0.0f,
+
+                0.0f, 1.0f, 0.0f, 1.0f,
+                -1.0f, 1.0f, -1.0f, 1.0f,
+                0.0f, 0.0f, 0.0f, 0.0f
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    } else {
+        float vertices[] = {
+                // pos      // tex
+                0.0f, 1.0f, 0.0f, 1.0f,
+                1.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 0.0f,
+
+                0.0f, 1.0f, 0.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 0.0f, 1.0f, 0.0f
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    }
+    bind();
+
+}
+
+void SpriteRenderer::bind() {
     glBindVertexArray(this->quadVAO);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) 0);

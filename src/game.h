@@ -19,6 +19,7 @@
 #include <GLFW/glfw3.h>
 #include "Sprite.h"
 #include "Player.h"
+#include "Maze.h"
 
 // Represents the current state of the game
 enum GameState {
@@ -37,7 +38,6 @@ public:
     bool Keys[1024];
     unsigned int Width, Height;
     int index;
-    Player *player;
 
     // constructor/destructor
     Game(unsigned int width, unsigned int height);
@@ -50,9 +50,18 @@ public:
     // game loop
     void ProcessInput(float dt);
 
+    void SetProjection();
+
+
     void Update(float dt);
 
     void Render();
+
+    static void loadPlayer();
+
+    bool CheckCollisions();
+
+    static void loadTiles();
 };
 
 #endif

@@ -21,7 +21,7 @@
 class SpriteRenderer {
 public:
     // Constructor (inits shaders/shapes)
-    SpriteRenderer(Shader &shader);
+    SpriteRenderer(Shader &shader, bool skew = false);
 
     // Destructor
     ~SpriteRenderer();
@@ -32,10 +32,12 @@ public:
 private:
     // Render state
     Shader shader;
+    bool skew;
     unsigned int quadVAO{};
 
     // Initializes and configures the quad's buffer and vertex attributes
     void initRenderData();
+    void bind();
 };
 
 #endif

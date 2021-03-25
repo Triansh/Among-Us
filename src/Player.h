@@ -16,21 +16,20 @@ enum MovementType {
 };
 
 
-class Player {
+class Player : public Sprite {
 
 
 public:
-    Player(float speed = 4.0f);
+    Player();
 
-    Sprite *sprite;
     float speed;
-
-    void draw();
-
+    glm::vec2 hitboxPos{}, hitboxSize{};
 
     void move(MovementType mt);
 
     void stop();
+
+    void setHitboxes();
 };
 
 
