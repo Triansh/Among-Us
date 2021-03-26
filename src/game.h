@@ -62,6 +62,8 @@ public:
     bool CheckCollisions();
 
     static void loadTiles();
+
+    static void loadImposter();
 };
 
 #endif

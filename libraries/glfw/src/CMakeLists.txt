@@ -2,7 +2,7 @@
 add_library(glfw "${GLFW_SOURCE_DIR}/include/GLFW/glfw3.h"
                  "${GLFW_SOURCE_DIR}/include/GLFW/glfw3native.h"
                  internal.h mappings.h context.c init.c input.c monitor.c
-                 vulkan.c window.c)
+                 vulkan.c constants.c)
 
 if (_GLFW_COCOA)
     target_sources(glfw PRIVATE cocoa_platform.h cocoa_joystick.h posix_thread.h
@@ -122,7 +122,7 @@ endif()
 # src files that VS will build (Clang ignores this because we set -std=c99)
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set_source_files_properties(context.c init.c input.c monitor.c vulkan.c
-                                window.c win32_init.c win32_joystick.c
+            constants.c win32_init.c win32_joystick.c
                                 win32_monitor.c win32_time.c win32_thread.c
                                 win32_window.c wgl_context.c egl_context.c
                                 osmesa_context.c PROPERTIES

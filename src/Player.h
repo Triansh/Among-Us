@@ -6,17 +6,11 @@
 #define AMONGUS_PLAYER_H
 
 
-#include "Sprite.h"
-
-enum MovementType {
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN,
-};
+#include "AnimatedSprite.h"
+#include "constants.h"
 
 
-class Player : public Sprite {
+class Player : public AnimatedSprite {
 
 
 public:

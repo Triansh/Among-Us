@@ -18,6 +18,19 @@ public:
 
     vector<Tile *> tiles;
     vector<string> pat;
+    int M, N;
+
+    vector<vector<int>> adj;
+
+    void generateGraph();
+
+    int getIdFromPos(glm::vec2 pos) const;
+
+    void runDjkstra(glm::vec2 destination);
+
+    char runDjkstra(glm::vec2 destination, glm::vec2 begin);
+
+    char getDirection(int beginId, int nextId) const;
 };
 
 

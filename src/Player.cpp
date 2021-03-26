@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <algorithm>
 
-Player::Player() : Sprite("sprite_24", glm::vec2(200, -50), 4.0f * glm::vec2(30, 40)) {
+Player::Player() : AnimatedSprite("player-right-idle", glm::vec2(200.f, 0.f), 3.80f * glm::vec2(30, 40)) {
 
     vector<string> runRightAnimNames, runLeftAnimNames;
     vector<string> idleRightAnimNames = {"player-right-idle"};
@@ -24,7 +24,7 @@ Player::Player() : Sprite("sprite_24", glm::vec2(200, -50), 4.0f * glm::vec2(30,
     addAnimation(RunRight, runRightAnimation);
     addAnimation(IdleLeft, idleLeftAnimation);
     addAnimation(IdleRight, idleRightAnimation);
-    this->speed = 5.0f;
+    this->speed = 7.0f;
 
     setHitboxes();
 }
@@ -52,8 +52,8 @@ void Player::move(MovementType mt) {
 
 void Player::setHitboxes() {
     hitboxPos = glm::vec2(transformation.position.x + 30,
-                          transformation.position.y + transformation.scale.y - 40);
-    hitboxSize = glm::vec2(transformation.scale.x - 60, 25);
+                          transformation.position.y + transformation.scale.y - 50);
+    hitboxSize = glm::vec2(transformation.scale.x - 60, 30);
 }
 
 void Player::stop() {

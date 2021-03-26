@@ -12,6 +12,7 @@
 #include "resourceManager.h"
 #include "spriteRenderer.h"
 #include "Camera2D.h"
+#include "Imposter.h"
 
 
 // Game-related State data
@@ -20,6 +21,7 @@ SpriteRenderer *Renderer;
 SpriteRenderer *SkewRenderer;
 Camera2D *camera;
 Player *player;
+Imposter *imp;
 Maze *maze;
 Tile *tile, *tile2;
 
@@ -56,10 +58,11 @@ void Game::Init() {
 
 
     loadPlayer();
+    loadImposter();
     loadTiles();
 
-
     player = new Player();
+    imp = new Imposter();
     maze = new Maze();
     camera = new Camera2D(player->getPosition());
     tile = new Tile("zz", player->hitboxPos, player->hitboxSize, false);
@@ -89,6 +92,25 @@ void Game::loadPlayer() {
 
 }
 
+void Game::loadImposter() {
+    for (int i = 0; i < 37; i++) {
+        std::string fileR, fileL, nameL, nameR;
+        fileL = "../assets/sprites/imposter/run-left/tile0";
+        fileR = "../assets/sprites/imposter/run-right/tile0";
+        fileL = fileL.append(i < 10 ? "0" : "") + std::to_string(i) + ".png";
+        fileR = fileR.append(i < 10 ? "0" : "") + std::to_string(i) + ".png";
+
+        nameL = "imposter-left_";
+        nameR = "imposter-right_";
+        nameL = nameL.append(i < 10 ? "0" : "") + std::to_string(i);
+        nameR = nameR.append(i < 10 ? "0" : "") + std::to_string(i);
+
+        ResourceManager::LoadTexture(fileL, true, nameL);
+        ResourceManager::LoadTexture(fileR, true, nameR);
+    }
+
+}
+
 void Game::loadTiles() {
     ResourceManager::LoadTexture("../assets/tiles/stone-tile.png", true, "stone-tile");
     ResourceManager::LoadTexture("../assets/tiles/skeld-tile.png", true, "skeld-tile");
@@ -115,9 +137,9 @@ void Game::SetProjection() {
 void Game::ProcessInput(float dt) {
 
     if (this->Keys[GLFW_KEY_J]) {
-        camera->SetZoom(camera->zoom - 0.003f);
+        camera->SetZoom(camera->zoom - 0.008f);
     } else if (this->Keys[GLFW_KEY_K]) {
-        camera->SetZoom(camera->zoom + 0.003f);
+        camera->SetZoom(camera->zoom + 0.008f);
     }
 
     bool moved = false;
@@ -160,10 +182,12 @@ void Game::ProcessInput(float dt) {
 
 void Game::Render() {
     player->draw();
+    imp->draw();
     for (auto x: maze->tiles) {
         Renderer->DrawSprite(x);
     }
     Renderer->DrawSprite(player);
+    Renderer->DrawSprite(imp);
 //    Renderer->DrawSprite(tile);
 //    Renderer->DrawSprite(tile2);
 

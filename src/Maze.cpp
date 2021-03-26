@@ -2,31 +2,33 @@
 // Created by triansh on 24/03/21.
 //
 #include <iostream>
+#include <queue>
 #include <stack>
 #include <random>
 #include "Maze.h"
+#include "constants.h"
 
 Maze::Maze() {
 
     createMaze();
+    generateGraph();
 
-    glm::vec2 pos = glm::vec2(200.0f, 200.0f);
-    glm::vec2 size = glm::vec2(200.0f, 150.0f);
+    glm::vec2 pos = glm::vec2(0.0f, 00.0f);
 
     for (auto &i : pat) {
         pos.x = 0.0f;
         for (char j : i) {
-            auto *tile = new Tile(j == '#' ? "skeld-wall" : "stone-tile", pos, size, j == '#');
+            auto *tile = new Tile(j == '#' ? "skeld-wall" : "stone-tile", pos, TILE_SIZE, j == '#');
             tiles.push_back(tile);
             if (j == 'S') {
-                tiles.push_back(new Tile("start-tile", pos, size, false));
+                tiles.push_back(new Tile("start-tile", pos, TILE_SIZE, false));
             } else if (j == 'E') {
-                tiles.push_back(new Tile("trophy-tile", pos, size, false));
+                tiles.push_back(new Tile("trophy-tile", pos, TILE_SIZE, false));
             }
-            pos.x += size.x;
+            pos.x += TILE_SIZE.x;
 
         }
-        pos.y += size.y;
+        pos.y += TILE_SIZE.y;
     }
 
 }
@@ -42,9 +44,9 @@ int getIdx(int x, int y, vector<pair<int, pair<int, int> > > cell_list) {
 
 void Maze::createMaze() {
 
-    int m = 5, n = 10;
-    int M = 2 * m + 1;
-    int N = 2 * n + 1;
+    int m = MAZE_HEIGHT, n = MAZE_WIDTH;
+    M = 2 * m + 1;
+    N = 2 * n + 1;
 
     char maze[M][N];
 
@@ -154,6 +156,17 @@ void Maze::createMaze() {
         }
     }
 
+    for (int i = 1; i < M - 1; i++) {
+        for (int j = 1; j < N - 1; j++) {
+            if (maze[i][j] == '#') {
+                if (dist100(rng) % 100 < 13) {
+                    maze[i][j] = ' ';
+                }
+            }
+        }
+    }
+
+
     maze[0][1] = 'S';
     maze[2 * m][2 * n - 1] = 'E';
 
@@ -164,4 +177,79 @@ void Maze::createMaze() {
         }
         pat.push_back(s);
     }
+}
+
+int Maze::getIdFromPos(glm::vec2 pos) const {
+
+    int j = pos.x / TILE_SIZE.x;
+    int i = pos.y / TILE_SIZE.y;
+    return N * i + j;
+}
+
+char Maze::runDjkstra(glm::vec2 destination, glm::vec2 begin) { // this is the destination
+
+    int idDestination = getIdFromPos(destination);
+    int idBegin = getIdFromPos(begin);
+    const int inf = 1e9;
+    vector<int> d(M * N, inf), par(M * N, -1);
+    d[idBegin] = 0;
+
+    priority_queue<pair<int, int>> pq;
+    pq.push({0, d[idBegin]});
+
+    while (!pq.empty()) {
+        auto v = pq.top().second;
+        pq.pop();
+        for (auto u : adj[v]) {
+            if (d[u] > d[v] + 1) {
+                d[u] = d[v] + 1;
+                par[u] = v;
+                pq.push({d[u], u});
+            }
+        }
+    }
+
+    int nextId;
+    for (nextId = idDestination; par[nextId] != idBegin; nextId = par[nextId]);
+
+    return getDirection(idBegin, nextId);
+
+}
+
+
+void Maze::generateGraph() {
+
+    adj.resize(M * N);
+
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            int id = N * i + j;
+            if (pat[i][j] == ' ') {
+                if (j < N and pat[i][j + 1] == ' ') {
+                    adj[id].push_back(N * i + j + 1);
+                }
+                if (j > 0 and pat[i][j - 1] == ' ') {
+                    adj[id].push_back(N * i + j - 1);
+                }
+                if (i < M and pat[i + 1][j] == ' ') {
+                    adj[id].push_back(N * (i + 1) + j);
+                }
+                if (i > 0 and pat[i - 1][j] == ' ') {
+                    adj[id].push_back(N * (i - 1) + j);
+                }
+            }
+        }
+    }
+}
+
+char Maze::getDirection(int beginId, int nextId) const {
+
+    pair<int, int> cellBegin = {beginId / N, beginId % N};
+    pair<int, int> cellNext = {nextId / N, nextId % N};
+
+    if (cellNext.first < cellBegin.first) return 'U';
+    else if (cellNext.first > cellBegin.first) return 'D';
+    else if (cellNext.second < cellBegin.second) return 'L';
+    else return 'R';
+
 }
