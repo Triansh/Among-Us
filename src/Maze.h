@@ -26,11 +26,17 @@ public:
 
     int getIdFromPos(glm::vec2 pos) const;
 
-    void runDjkstra(glm::vec2 destination);
 
     char runDjkstra(glm::vec2 destination, glm::vec2 begin);
 
     char getDirection(int beginId, int nextId) const;
+
+    glm::vec2 getImposterPos();
+    void displayMaze();
+
+    void makeTiles();
+
+    int verifyDestination(glm::vec2 vec);
 };
 
 

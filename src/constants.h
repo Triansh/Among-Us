@@ -11,14 +11,15 @@ const unsigned int SCREEN_HEIGHT = 800;
 
 const glm::vec2 TILE_SIZE = glm::vec2(200.0f, 150.0f);
 
-const int MAZE_WIDTH = 15;
-const int MAZE_HEIGHT = 8;
+const int MAZE_WIDTH = 12;
+const int MAZE_HEIGHT = 12;
 
 enum MovementType {
     LEFT,
     RIGHT,
     UP,
     DOWN,
+    NONE,
 };
 
 #endif //AMONGUS_CONSTANTS_H

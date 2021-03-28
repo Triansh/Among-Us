@@ -10,13 +10,19 @@
 #include "constants.h"
 
 
-class Imposter: public AnimatedSprite {
+class Imposter : public AnimatedSprite {
 
 public:
     Imposter();
 
-//    void move(MovementType mt);
+    void move();
 
+    float speed;
+    glm::vec2 target;
+
+    void setHitbox() override;
+
+    bool checkTarget();
 
 };
 

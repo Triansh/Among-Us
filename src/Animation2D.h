@@ -14,7 +14,7 @@ using namespace std;
 class Animation2D {
 
 public:
-    unsigned int current_index;
+    unsigned int currentIndex;
     float fps;
 
     vector<string> textures;
@@ -22,6 +22,7 @@ public:
     Animation2D(float fps, vector<string> &textures);
 
     void play();
+    void stop();
 
     string getAnimation();
 

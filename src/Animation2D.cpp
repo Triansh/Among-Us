@@ -6,7 +6,7 @@
 #include "Animation2D.h"
 
 Animation2D::Animation2D(float fps, vector<string> &textures) {
-    current_index = 0;
+    currentIndex = 0;
     this->fps = fps;
     this->textures = textures;
     deltaTime = 1.0 / fps;
@@ -17,11 +17,16 @@ void Animation2D::play() {
 
     double cur_frame = glfwGetTime();
     if (cur_frame - lastFrame > deltaTime) {
-        current_index = (current_index + 1) % textures.size();
+        currentIndex = (currentIndex + 1) % textures.size();
         lastFrame = cur_frame;
     }
 }
 
 string Animation2D::getAnimation() {
-    return textures[current_index];
+    return textures[currentIndex];
+}
+
+void Animation2D::stop() {
+    currentIndex = 0;
+    lastFrame = 0;
 }

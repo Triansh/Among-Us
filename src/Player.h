@@ -17,13 +17,12 @@ public:
     Player();
 
     float speed;
-    glm::vec2 hitboxPos{}, hitboxSize{};
 
     void move(MovementType mt);
 
     void stop();
 
-    void setHitboxes();
+    void setHitbox() override;
 };
 
 

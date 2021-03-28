@@ -59,11 +59,19 @@ public:
 
     static void loadPlayer();
 
-    bool CheckCollisions();
 
     static void loadTiles();
 
     static void loadImposter();
+
+
+    static bool CheckCollisions(AnimatedSprite *sprite);
+
+    static bool movePlayer(MovementType dir, MovementType oppDir);
+
+    void moveImposter();
+
+    void SetImposterPosition();
 };
 
 #endif

@@ -15,6 +15,8 @@ public:
     Tile(const string &textureName, glm::vec2 position, glm::vec2 scale, bool isWall = false, float rotation = 0.0f,
          glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f));
 
+    void setHitbox() override;
+
 };
 
 

@@ -7,6 +7,7 @@
 
 #include "Animation2D.h"
 #include "Sprite.h"
+#include "constants.h"
 
 enum AnimationType {
     IdleLeft,
@@ -30,7 +31,7 @@ public:
 
     void draw();
 
-
+    void stopAnimation(AnimationType animName);
 };
 
 

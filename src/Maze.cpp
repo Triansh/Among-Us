@@ -8,11 +8,24 @@
 #include "Maze.h"
 #include "constants.h"
 
+void Maze::displayMaze() {
+    for (auto &aa:pat) {
+        for (auto &bb: aa) {
+            cout << bb << " ";
+        }
+        cout << "\n";
+    }
+}
+
 Maze::Maze() {
 
     createMaze();
+    displayMaze();
     generateGraph();
+    makeTiles();
+}
 
+void Maze::makeTiles() {
     glm::vec2 pos = glm::vec2(0.0f, 00.0f);
 
     for (auto &i : pat) {
@@ -30,7 +43,6 @@ Maze::Maze() {
         }
         pos.y += TILE_SIZE.y;
     }
-
 }
 
 int getIdx(int x, int y, vector<pair<int, pair<int, int> > > cell_list) {
@@ -66,6 +78,7 @@ void Maze::createMaze() {
         }
 
     }
+
 
     vector<pair<int, pair<int, int> > > cell_list;
     vector<bool> visited(m * n, false);
@@ -186,36 +199,62 @@ int Maze::getIdFromPos(glm::vec2 pos) const {
     return N * i + j;
 }
 
-char Maze::runDjkstra(glm::vec2 destination, glm::vec2 begin) { // this is the destination
+char Maze::runDjkstra(glm::vec2 destination, glm::vec2 begin) {
 
-    int idDestination = getIdFromPos(destination);
+    int idDestination = verifyDestination(destination);
     int idBegin = getIdFromPos(begin);
-    const int inf = 1e9;
+
+//    cout << idDestination << " " << idBegin << " %%%%\n";
+    const int inf = 1e7;
     vector<int> d(M * N, inf), par(M * N, -1);
     d[idBegin] = 0;
 
     priority_queue<pair<int, int>> pq;
-    pq.push({0, d[idBegin]});
+    pq.push({0, idBegin});
 
     while (!pq.empty()) {
         auto v = pq.top().second;
         pq.pop();
+//        cout << v << ": ";
+//        for (auto u : adj[v]) {
+//            cout << u << " ";
+//        }
+//        cout << "\n";
         for (auto u : adj[v]) {
             if (d[u] > d[v] + 1) {
                 d[u] = d[v] + 1;
                 par[u] = v;
-                pq.push({d[u], u});
+                pq.push({-d[u], u});
+//                cout << u << " " << v << "\n";
             }
         }
     }
+//    cout << "=====================================================\n";
+
+//    for (int i = 0; i < d.size(); ++i) {
+//        cout << "(" << i << ") " << d[i] << "\n";
+//    }
 
     int nextId;
-    for (nextId = idDestination; par[nextId] != idBegin; nextId = par[nextId]);
+    for (nextId = idDestination; par[nextId] != idBegin and par[nextId] != -1; nextId = par[nextId]) {
+    }
 
+//    cout << idBegin << " " << nextId << " $$\n";
     return getDirection(idBegin, nextId);
 
 }
 
+glm::vec2 Maze::getImposterPos() {
+
+    int index = N - 2;
+    for (int i = 1; i < M; i++) {
+        if (pat[i][index] != '#') {
+            return tiles[i * N + index]->getCenter();
+        }
+    }
+    return glm::vec2(0.0f, 0.0f);
+
+}
 
 void Maze::generateGraph() {
 
@@ -224,20 +263,26 @@ void Maze::generateGraph() {
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
             int id = N * i + j;
-            if (pat[i][j] == ' ') {
-                if (j < N and pat[i][j + 1] == ' ') {
+            if (pat[i][j] != '#') {
+                if (j < N - 1 and pat[i][j + 1] != '#') {
                     adj[id].push_back(N * i + j + 1);
                 }
-                if (j > 0 and pat[i][j - 1] == ' ') {
+                if (j > 0 and pat[i][j - 1] != '#') {
                     adj[id].push_back(N * i + j - 1);
                 }
-                if (i < M and pat[i + 1][j] == ' ') {
+                if (i < M - 1 and pat[i + 1][j] != '#') {
                     adj[id].push_back(N * (i + 1) + j);
                 }
-                if (i > 0 and pat[i - 1][j] == ' ') {
+                if (i > 0 and pat[i - 1][j] != '#') {
                     adj[id].push_back(N * (i - 1) + j);
                 }
             }
+        }
+    }
+
+    for (int i = 0; i < M * N; i++) {
+        for (auto &bb : adj[i]) {
+            cout << i << " " << bb << "\n";
         }
     }
 }
@@ -250,6 +295,28 @@ char Maze::getDirection(int beginId, int nextId) const {
     if (cellNext.first < cellBegin.first) return 'U';
     else if (cellNext.first > cellBegin.first) return 'D';
     else if (cellNext.second < cellBegin.second) return 'L';
-    else return 'R';
+    else if (cellNext.second > cellBegin.second) return 'R';
+    else return 'I';
 
+}
+
+int Maze::verifyDestination(glm::vec2 destination) {
+    int id = getIdFromPos(destination);
+    int i = id / N, j = id % N;
+
+    if (pat[i][j] == '#') {
+        if (j < N - 1 and pat[i][j + 1] != '#') {
+            j += 1;
+        } else if (j > 0 and pat[i][j - 1] != '#') {
+            j -= 1;
+        }
+        if (i < M - 1 and pat[i + 1][j] != '#') {
+            i += 1;
+        }
+        if (i > 0 and pat[i - 1][j] != '#') {
+            i -= 1;
+        }
+    }
+
+    return N * i + j;
 }

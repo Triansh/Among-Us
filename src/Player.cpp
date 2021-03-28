@@ -25,35 +25,32 @@ Player::Player() : AnimatedSprite("player-right-idle", glm::vec2(200.f, 0.f), 3.
     addAnimation(IdleLeft, idleLeftAnimation);
     addAnimation(IdleRight, idleRightAnimation);
     this->speed = 7.0f;
+    setHitbox();
 
-    setHitboxes();
 }
 
-void Player::move(MovementType mt) {
+ void Player::move(MovementType mt) {
 
     if (mt == RIGHT) {
         addPosition(glm::vec2(speed, 0.0f));
-        currAnim = RunRight;
     }
     if (mt == LEFT) {
         addPosition(glm::vec2(-speed, 0.0f));
-        currAnim = RunLeft;
     }
     if (mt == UP) {
         addPosition(glm::vec2(0.0f, -speed));
-        currAnim = (currAnim == IdleRight or currAnim == RunRight) ? RunRight : RunLeft;
     }
     if (mt == DOWN) {
         addPosition(glm::vec2(0.0f, speed));
-        currAnim = (currAnim == IdleRight or currAnim == RunRight) ? RunRight : RunLeft;
     }
-    setHitboxes();
+
+    setHitbox();
 }
 
-void Player::setHitboxes() {
+void Player::setHitbox() {
     hitboxPos = glm::vec2(transformation.position.x + 30,
                           transformation.position.y + transformation.scale.y - 50);
-    hitboxSize = glm::vec2(transformation.scale.x - 60, 30);
+    hitboxSize = glm::vec2(transformation.scale.x - 60, 14);
 }
 
 void Player::stop() {

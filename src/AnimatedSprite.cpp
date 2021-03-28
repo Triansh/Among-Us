@@ -24,3 +24,7 @@ void AnimatedSprite::draw() {
         texture = ResourceManager::GetTexture(animation->getAnimation());
     }
 }
+
+void AnimatedSprite::stopAnimation(AnimationType animName) {
+    anims[animName]->stop();
+}
