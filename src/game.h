@@ -30,13 +30,11 @@ enum GameState {
 
 typedef struct Info {
     int score;
-    int totalTasks;
     int tasksCompleted;
     int health;
 
     Info() {
         score = 0;
-        totalTasks = 2;
         tasksCompleted = 0;
         health = 1;
     }

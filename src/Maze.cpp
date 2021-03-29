@@ -292,13 +292,7 @@ char Maze::getDirection(int beginId, int nextId) const {
 
 glm::vec2 Maze::getTaskTilePosition(int k) {
 
-//    for (int i = 0; i < M; i++) {
-//        for (int j = 0; j < N; j++) {
-//            cout << tiles[i * N + j]->getCenter().x << " " << tiles[i * N + j]->getCenter().y << "\n";
-//        }
-//    }
-
-    int x = k == 1 ? 1 : (1);
+    int x = k == 1 ? 1 : (M - 4);
     int y = k == 1 ? (N - 4) : 1;
 
     for (int i = x; i < x + 3; i++) {
@@ -343,9 +337,9 @@ void Maze::makeObstacles() {
             if (pat[i][j] == ' ' and dist100(rng) % 100 < 10) {
                 PowerUp *pup;
                 if (dist100(rng) % 3 < 1) {
-                    pup = new PowerUp("bomb", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.5f, COIN);
+                    pup = new PowerUp("bomb", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.5f, BOMB);
                 } else {
-                    pup = new PowerUp("coin", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.5f, BOMB);
+                    pup = new PowerUp("coin", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.5f, COIN);
                 }
                 pup->setCenter(tiles[i * N + j]->getCenter());
                 obstacles.push_back(pup);

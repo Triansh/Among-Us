@@ -8,12 +8,14 @@
 ******************************************************************/
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 #include "game.h"
 #include "resourceManager.h"
 #include "spriteRenderer.h"
 #include "Camera2D.h"
 #include "Imposter.h"
 #include "PowerUp.h"
+#include "textRenderer.h"
 
 
 // Game-related State data
@@ -26,7 +28,7 @@ Imposter *imp;
 Maze *maze;
 Tile *tile, *tile2, *tile3;
 PowerUp *killImposter, *addObstacles;
-
+TextRenderer *Text;
 
 Game::Game(unsigned int width, unsigned int height)
         : State(GAME_ACTIVE), Keys(), Width(width), Height(height) {
@@ -39,6 +41,10 @@ Game::~Game() {
 
 
 void Game::Init() {
+
+    Text = new TextRenderer(this->Width, this->Height);
+    Text->Load("../assets/fonts/Hack-Bold.ttf", 24);
+
     // load shaders
     ResourceManager::LoadShader("../src/shaders/sprite.vs", "../src/shaders/sprite.fs", nullptr, "sprite");
     // configure shaders
@@ -92,12 +98,14 @@ void Game::Update(float dt) {
     if (CheckCollisions(player, addObstacles)) {
         if (addObstacles->activate()) {
             maze->makeObstacles();
+            info.tasksCompleted += 1;
         }
     }
 
     if (CheckCollisions(player, killImposter)) {
         if (killImposter->activate()) {
             imp->isDead = true;
+            info.tasksCompleted += 1;
         }
     }
 
@@ -140,9 +148,21 @@ void Game::Render() {
     }
 //    cout << "All Rendered" << "\n";
     Renderer->DrawSprite(tile);
+//    ---------+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //    Renderer->DrawSprite(tile2);
 //    Renderer->DrawSprite(tile3);
+    auto projection = camera->GetProjection(player->transformation.position);
+    std::stringstream time, health, tasks;
+    time << 120 - (int) glfwGetTime();
+    health << info.score;
+    tasks << info.tasksCompleted;
 
+    float hudTop = camera->top + 10, hupLeft = camera->right - 200;
+    Text->RenderText("HEALTH: " + health.str(), hupLeft, hudTop, 1.0f, projection);
+    Text->RenderText("TASKS: " + tasks.str() + " / 2", hupLeft, hudTop + 30, 1.0f, projection);
+    Text->RenderText("LIGHT: " + time.str(), hupLeft, hudTop + 30 * 2, 1.0f, projection);
+    Text->RenderText("TIME: " + time.str(), hupLeft, hudTop + 30 * 3, 1.0f, projection);
+    SetProjection();
 
     cout << killImposter->isActive << " " << addObstacles->isActive << "\n";
 }
@@ -195,8 +215,7 @@ void Game::SetImposterPosition() {
 
 void Game::SetProjection() {
     glm::mat4 projection = camera->GetProjection(player->transformation.position);
-    ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
-
+    ResourceManager::GetShader("sprite").SetMatrix4("projection", projection, true);
 }
 
 void Game::ProcessInput(float dt) {

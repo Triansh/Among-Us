@@ -12,8 +12,9 @@
 class Camera2D {
 
 public:
-    glm::vec2 focusPosition;
+    glm::vec2 focusPosition{};
     float zoom;
+    float left{}, top{}, right{}, bottom{};
 
     Camera2D(glm::vec2 focusPosition, float zoom = 1.0f);
 
