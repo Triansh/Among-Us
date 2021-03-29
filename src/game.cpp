@@ -13,6 +13,7 @@
 #include "spriteRenderer.h"
 #include "Camera2D.h"
 #include "Imposter.h"
+#include "PowerUp.h"
 
 
 // Game-related State data
@@ -24,6 +25,7 @@ Player *player;
 Imposter *imp;
 Maze *maze;
 Tile *tile, *tile2, *tile3;
+PowerUp *killImposter, *addObstacles;
 
 
 Game::Game(unsigned int width, unsigned int height)
@@ -41,8 +43,7 @@ void Game::Init() {
     ResourceManager::LoadShader("../src/shaders/sprite.vs", "../src/shaders/sprite.fs", nullptr, "sprite");
     // configure shaders
     glm::mat4 projection =
-            glm::ortho(0.0f, static_cast<float>(this->Width),
-                       static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
+            glm::ortho(0.0f, static_cast<float>(this->Width), static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
 
     ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
@@ -61,14 +62,19 @@ void Game::Init() {
     loadImposter();
     loadTiles();
 
+    maze = new Maze();
     player = new Player();
     imp = new Imposter();
-    maze = new Maze();
     camera = new Camera2D(player->getPosition());
     tile = new Tile("grass-tile", imp->hitboxPos, imp->hitboxSize, false);
     tile2 = new Tile("brick-tile", maze->tiles[0]->hitboxPos, maze->tiles[0]->hitboxSize, false);
     tile3 = new Tile("brick-tile", maze->tiles[0 + maze->N + 1]->hitboxPos, maze->tiles[0 + maze->N + 1]->hitboxSize,
                      false);
+    killImposter = new PowerUp("report", glm::vec2(0), TILE_SIZE, KILL_IMPOSTER);
+    addObstacles = new PowerUp("powerup", glm::vec2(0), TILE_SIZE, ACTIVATE_OBS);
+    killImposter->setCenter(maze->getTaskTilePosition(1));
+    addObstacles->setCenter(maze->getTaskTilePosition(2));
+    cout << addObstacles->getCenter().x << " " << addObstacles->getCenter().y << "\n";
     SetProjection();
     SetImposterPosition();
 }
@@ -76,38 +82,69 @@ void Game::Init() {
 
 void Game::Update(float dt) {
     SetProjection();
-    tile->transformation.position = imp->hitboxPos;
-    tile->transformation.scale = imp->hitboxSize;
+    tile->transformation.position = player->hitboxPos;
+    tile->transformation.scale = player->hitboxSize;
+
+    tile2->transformation.position = addObstacles->hitboxPos;
+    tile2->transformation.scale = addObstacles->hitboxSize;
     moveImposter();
-}
 
-void Game::SetImposterPosition() {
-    auto x = maze->getImposterPos();
-    imp->setCenter(x);
-    imp->target = x;
-}
-
-void Game::SetProjection() {
-    glm::mat4 projection = camera->GetProjection(player->transformation.position);
-    ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
-
-}
-
-void Game::moveImposter() {
-    if (imp->checkTarget()) {
-        char dir = maze->runDjkstra(player->getCenter(), imp->getCenter());
-        cout << dir << "\n";
-        if (dir == 'U') {
-            imp->target += glm::vec2(0, -TILE_SIZE.y);
-        } else if (dir == 'D') {
-            imp->target += glm::vec2(0, TILE_SIZE.y);
-        } else if (dir == 'R') {
-            imp->target += glm::vec2(TILE_SIZE.x, 0);
-        } else if (dir == 'L') {
-            imp->target += glm::vec2(-TILE_SIZE.x, 0);
+    if (CheckCollisions(player, addObstacles)) {
+        if (addObstacles->activate()) {
+            maze->makeObstacles();
         }
     }
-    imp->move();
+
+    if (CheckCollisions(player, killImposter)) {
+        if (killImposter->activate()) {
+            imp->isDead = true;
+        }
+    }
+
+    for (auto &obs : maze->obstacles) {
+        if (CheckCollisions(player, obs)) {
+            if (obs->activate()) {
+                if (obs->type == COIN) {
+                    info.score += 50;
+                } else {
+                    info.score -= 20;
+                }
+            }
+        }
+    }
+}
+
+
+void Game::Render() {
+    player->draw();
+    imp->draw();
+
+    for (auto x: maze->tiles) {
+        if ((x->isWall and x->getPosition().y < player->getPosition().y) or !x->isWall)
+            Renderer->DrawSprite(x);
+    }
+
+    if (!killImposter->isActive) Renderer->DrawSprite(killImposter);
+    if (!addObstacles->isActive) Renderer->DrawSprite(addObstacles);
+
+    for (auto x : maze->obstacles) {
+        if (!x->isActive) Renderer->DrawSprite(x);
+    }
+
+    Renderer->DrawSprite(player);
+    if (!imp->isDead) Renderer->DrawSprite(imp);
+
+    for (auto x: maze->tiles) {
+        if (x->isWall and x->getPosition().y >= player->getPosition().y)
+            Renderer->DrawSprite(x);
+    }
+//    cout << "All Rendered" << "\n";
+    Renderer->DrawSprite(tile);
+//    Renderer->DrawSprite(tile2);
+//    Renderer->DrawSprite(tile3);
+
+
+    cout << killImposter->isActive << " " << addObstacles->isActive << "\n";
 }
 
 
@@ -125,9 +162,7 @@ bool Game::movePlayer(MovementType dir, MovementType oppDir) {
         player->currAnim = RunRight;
     }
 
-//    if (oldAnim != player->currAnim) player->stopAnimation(oldAnim);
-
-    if (!CheckCollisions(player)) {
+    if (!CheckTileCollisions(player)) {
         return true;
     }
     player->move(oppDir);
@@ -135,33 +170,42 @@ bool Game::movePlayer(MovementType dir, MovementType oppDir) {
 }
 
 
-void Game::Render() {
-    player->draw();
-    imp->draw();
-    for (auto x: maze->tiles) {
-        if ((x->isWall and x->getPosition().y < player->getPosition().y) or !x->isWall)
-            Renderer->DrawSprite(x);
+void Game::moveImposter() {
+    if (imp->checkTarget()) {
+        char dir = maze->runDjkstra(player->getCenter(), imp->getCenter());
+//        cout << dir << "\n";
+        if (dir == 'U') {
+            imp->target += glm::vec2(0, -TILE_SIZE.y);
+        } else if (dir == 'D') {
+            imp->target += glm::vec2(0, TILE_SIZE.y);
+        } else if (dir == 'R') {
+            imp->target += glm::vec2(TILE_SIZE.x, 0);
+        } else if (dir == 'L') {
+            imp->target += glm::vec2(-TILE_SIZE.x, 0);
+        }
     }
-    Renderer->DrawSprite(player);
-    Renderer->DrawSprite(imp);
-    for (auto x: maze->tiles) {
-        if (x->isWall and x->getPosition().y >= player->getPosition().y)
-            Renderer->DrawSprite(x);
-    }
-//    cout << "All Rendered" << "\n";
-//    Renderer->DrawSprite(tile);
-//    Renderer->DrawSprite(tile2);
-//    Renderer->DrawSprite(tile3);
+    imp->move();
+}
+
+void Game::SetImposterPosition() {
+    auto x = maze->getImposterPos();
+    imp->setCenter(x);
+    imp->target = x;
+}
+
+void Game::SetProjection() {
+    glm::mat4 projection = camera->GetProjection(player->transformation.position);
+    ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 
 }
 
-
 void Game::ProcessInput(float dt) {
 
+    float cameraFactor = 0.005f;
     if (this->Keys[GLFW_KEY_J]) {
-        camera->SetZoom(camera->zoom - 0.008f);
+        camera->SetZoom(camera->zoom - cameraFactor);
     } else if (this->Keys[GLFW_KEY_K]) {
-        camera->SetZoom(camera->zoom + 0.008f);
+        camera->SetZoom(camera->zoom + cameraFactor);
     }
 
     bool moved = false;
@@ -182,28 +226,26 @@ void Game::ProcessInput(float dt) {
     }
 }
 
-bool Game::CheckCollisions(AnimatedSprite *sprite) {
+bool Game::CheckCollisions(Sprite *sprite, Sprite *collider) {
 
+    auto spritePos = sprite->hitboxPos;
+    auto spriteSize = sprite->hitboxSize;
+    auto colliderPos = collider->hitboxPos;
+    auto colliderSize = collider->hitboxSize;
+
+    bool collisionX = (spritePos.x + spriteSize.x >= colliderPos.x && colliderPos.x + colliderSize.x >= spritePos.x);
+    bool collisionY = (spritePos.y + spriteSize.y >= colliderPos.y && colliderPos.y + colliderSize.y >= spritePos.y);
+    return (collisionX & collisionY);
+}
+
+bool Game::CheckTileCollisions(Sprite *sprite) {
     bool collided = false;
-
-    auto playerPos = sprite->hitboxPos;
-    auto playerSize = sprite->hitboxSize;
     for (auto tl : maze->tiles) {
-
         if (tl->isWall) {
-            auto tilePos = tl->hitboxPos;
-            auto tileSize = tl->hitboxSize;
-
-            bool collisionX = (playerPos.x + playerSize.x >= tilePos.x && tilePos.x + tileSize.x >= playerPos.x);
-            bool collisionY = (playerPos.y + playerSize.y >= tilePos.y && tilePos.y + tileSize.y >= playerPos.y);
-            collided |= (collisionX && collisionY);
-            if (collided) {
-//                cout << tilePos.x << " " << tilePos.y << "\n";
-            }
+            collided |= CheckCollisions(sprite, tl);
         }
     }
     return collided;
-
 }
 
 void Game::loadPlayer() {
@@ -254,4 +296,8 @@ void Game::loadTiles() {
     ResourceManager::LoadTexture("../assets/tiles/brick-tile.png", true, "brick-tile");
     ResourceManager::LoadTexture("../assets/tiles/start-tile.png", true, "start-tile");
     ResourceManager::LoadTexture("../assets/tiles/trophy-tile.png", true, "trophy-tile");
+    ResourceManager::LoadTexture("../assets/miscellaneous/report.png", true, "report");
+    ResourceManager::LoadTexture("../assets/miscellaneous/powerup.png", true, "powerup");
+    ResourceManager::LoadTexture("../assets/miscellaneous/coin.png", true, "coin");
+    ResourceManager::LoadTexture("../assets/miscellaneous/bomb.png", true, "bomb");
 }

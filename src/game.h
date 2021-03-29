@@ -28,6 +28,21 @@ enum GameState {
     GAME_WIN
 };
 
+typedef struct Info {
+    int score;
+    int totalTasks;
+    int tasksCompleted;
+    int health;
+
+    Info() {
+        score = 0;
+        totalTasks = 2;
+        tasksCompleted = 0;
+        health = 1;
+    }
+
+} Info;
+
 // Game holds all game-related state and functionality.
 // Combines all game-related data into a single class for
 // easy access to each of the components and manageability.
@@ -38,6 +53,7 @@ public:
     bool Keys[1024];
     unsigned int Width, Height;
     int index;
+    Info info;
 
     // constructor/destructor
     Game(unsigned int width, unsigned int height);
@@ -65,13 +81,15 @@ public:
     static void loadImposter();
 
 
-    static bool CheckCollisions(AnimatedSprite *sprite);
-
     static bool movePlayer(MovementType dir, MovementType oppDir);
 
     void moveImposter();
 
     void SetImposterPosition();
+
+    static bool CheckCollisions(Sprite *sprite, Sprite *collider);
+
+    static bool CheckTileCollisions(Sprite *sprite);
 };
 
 #endif

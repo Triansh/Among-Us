@@ -23,7 +23,8 @@ Imposter::Imposter() : AnimatedSprite("imposter-left_00", glm::vec2(200.f, 200.f
     addAnimation(RunLeft, runLeftAnimation);
     addAnimation(RunRight, runRightAnimation);
 
-    speed = 5.0f;
+    speed = 2.50f;
+    isDead = false;
     setHitbox();
 
 }

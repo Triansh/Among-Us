@@ -31,6 +31,7 @@ glm::vec2 Sprite::getCenter() const {
 void Sprite::setCenter(glm::vec2 pos) {
 
     transformation.position = pos - transformation.scale / 2.0f;
+    setHitbox();
 
 }
 

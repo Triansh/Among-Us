@@ -9,7 +9,7 @@
 using namespace std;
 
 #include "texture.h"
-#include "transform.h"
+#include "Transform.h"
 #include "Animation2D.h"
 
 class Sprite {

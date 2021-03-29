@@ -20,7 +20,7 @@ void Maze::displayMaze() {
 Maze::Maze() {
 
     createMaze();
-    displayMaze();
+//    displayMaze();
     generateGraph();
     makeTiles();
 }
@@ -33,22 +33,31 @@ void Maze::makeTiles() {
         for (char j : i) {
             auto *tile = new Tile(j == '#' ? "skeld-wall" : "stone-tile", pos, TILE_SIZE, j == '#');
             tiles.push_back(tile);
+            pos.x += TILE_SIZE.x;
+        }
+        pos.y += TILE_SIZE.y;
+    }
+
+    pos = glm::vec2(0.0f, 00.0f);
+    for (auto &i : pat) {
+        pos.x = 0.0f;
+        for (char j : i) {
             if (j == 'S') {
                 tiles.push_back(new Tile("start-tile", pos, TILE_SIZE, false));
             } else if (j == 'E') {
                 tiles.push_back(new Tile("trophy-tile", pos, TILE_SIZE, false));
             }
             pos.x += TILE_SIZE.x;
-
         }
         pos.y += TILE_SIZE.y;
     }
+
 }
 
-int getIdx(int x, int y, vector<pair<int, pair<int, int> > > cell_list) {
-    for (int i = 0; i < cell_list.size(); i++) {
-        if (cell_list[i].second.first == x && cell_list[i].second.second == y)
-            return cell_list[i].first;
+int getIdx(int x, int y, vector<pair<int, pair<int, int> > > &cell_list) {
+    for (auto &i : cell_list) {
+        if (i.second.first == x && i.second.second == y)
+            return i.first;
     }
     cout << "getIdx() couldn't find the index!" << endl;
     return -1;
@@ -215,31 +224,19 @@ char Maze::runDjkstra(glm::vec2 destination, glm::vec2 begin) {
     while (!pq.empty()) {
         auto v = pq.top().second;
         pq.pop();
-//        cout << v << ": ";
-//        for (auto u : adj[v]) {
-//            cout << u << " ";
-//        }
-//        cout << "\n";
         for (auto u : adj[v]) {
             if (d[u] > d[v] + 1) {
                 d[u] = d[v] + 1;
                 par[u] = v;
                 pq.push({-d[u], u});
-//                cout << u << " " << v << "\n";
             }
         }
     }
-//    cout << "=====================================================\n";
-
-//    for (int i = 0; i < d.size(); ++i) {
-//        cout << "(" << i << ") " << d[i] << "\n";
-//    }
 
     int nextId;
     for (nextId = idDestination; par[nextId] != idBegin and par[nextId] != -1; nextId = par[nextId]) {
     }
 
-//    cout << idBegin << " " << nextId << " $$\n";
     return getDirection(idBegin, nextId);
 
 }
@@ -279,12 +276,6 @@ void Maze::generateGraph() {
             }
         }
     }
-
-    for (int i = 0; i < M * N; i++) {
-        for (auto &bb : adj[i]) {
-            cout << i << " " << bb << "\n";
-        }
-    }
 }
 
 char Maze::getDirection(int beginId, int nextId) const {
@@ -297,7 +288,28 @@ char Maze::getDirection(int beginId, int nextId) const {
     else if (cellNext.second < cellBegin.second) return 'L';
     else if (cellNext.second > cellBegin.second) return 'R';
     else return 'I';
+}
 
+glm::vec2 Maze::getTaskTilePosition(int k) {
+
+//    for (int i = 0; i < M; i++) {
+//        for (int j = 0; j < N; j++) {
+//            cout << tiles[i * N + j]->getCenter().x << " " << tiles[i * N + j]->getCenter().y << "\n";
+//        }
+//    }
+
+    int x = k == 1 ? 1 : (1);
+    int y = k == 1 ? (N - 4) : 1;
+
+    for (int i = x; i < x + 3; i++) {
+        for (int j = y; j < y + 3; j++) {
+            if (pat[i][j] == ' ') {
+                cout << tiles[i * N + j]->getCenter().x << " " << tiles[i * N + j]->getCenter().y << " #\n";
+                return tiles[i * N + j]->getCenter();
+            }
+        }
+    }
+    return glm::vec2(0);
 }
 
 int Maze::verifyDestination(glm::vec2 destination) {
@@ -319,4 +331,25 @@ int Maze::verifyDestination(glm::vec2 destination) {
     }
 
     return N * i + j;
+}
+
+void Maze::makeObstacles() {
+    random_device rdev;
+    mt19937 rng(rdev());
+    uniform_int_distribution<mt19937::result_type> dist100(1, 100);
+
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            if (pat[i][j] == ' ' and dist100(rng) % 100 < 10) {
+                PowerUp *pup;
+                if (dist100(rng) % 3 < 1) {
+                    pup = new PowerUp("bomb", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.5f, COIN);
+                } else {
+                    pup = new PowerUp("coin", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.5f, BOMB);
+                }
+                pup->setCenter(tiles[i * N + j]->getCenter());
+                obstacles.push_back(pup);
+            }
+        }
+    }
 }

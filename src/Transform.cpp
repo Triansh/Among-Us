@@ -1,7 +1,7 @@
 //
 // Created by triansh on 24/03/21.
 //
-#include "transform.h"
+#include "Transform.h"
 
 Transform::Transform(glm::vec2 position, glm::vec2 scale, float angle) {
     this->position = position;

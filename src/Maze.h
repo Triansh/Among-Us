@@ -7,6 +7,7 @@
 
 
 #include "Tile.h"
+#include "PowerUp.h"
 
 class Maze {
 
@@ -17,6 +18,7 @@ public:
     void createMaze();
 
     vector<Tile *> tiles;
+    vector<PowerUp*> obstacles;
     vector<string> pat;
     int M, N;
 
@@ -37,6 +39,11 @@ public:
     void makeTiles();
 
     int verifyDestination(glm::vec2 vec);
+
+
+    glm::vec2 getTaskTilePosition(int k);
+
+    void makeObstacles();
 };
 
 

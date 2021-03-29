@@ -18,6 +18,7 @@ public:
     void move();
 
     float speed;
+    bool isDead;
     glm::vec2 target;
 
     void setHitbox() override;
