@@ -168,6 +168,7 @@ void Maze::createMaze() {
                     maze[m_stack.top().second.first + 0][m_stack.top().second.second - 1] = ' ';
                     m_stack.push(cell_list[getIdx(m_stack.top().second.first + 0, m_stack.top().second.second - 2,
                                                   cell_list)]);
+                default:
                     break;
             }
 

@@ -24,7 +24,7 @@
 // Represents the current state of the game
 enum GameState {
     GAME_ACTIVE,
-    GAME_MENU,
+    GAME_LOST,
     GAME_WIN
 };
 
@@ -88,6 +88,8 @@ public:
     static bool CheckCollisions(Sprite *sprite, Sprite *collider);
 
     static bool CheckTileCollisions(Sprite *sprite);
+
+    static void clearColor(glm::vec4 color);
 };
 
 #endif

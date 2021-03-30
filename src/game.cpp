@@ -27,6 +27,8 @@ Player *player;
 Imposter *imp;
 Maze *maze;
 Tile *tile, *tile2, *tile3;
+Tile *youWin, *youLose;
+Tile *endTile;
 PowerUp *killImposter, *addObstacles;
 TextRenderer *Text;
 
@@ -76,6 +78,7 @@ void Game::Init() {
     tile2 = new Tile("brick-tile", maze->tiles[0]->hitboxPos, maze->tiles[0]->hitboxSize, false);
     tile3 = new Tile("brick-tile", maze->tiles[0 + maze->N + 1]->hitboxPos, maze->tiles[0 + maze->N + 1]->hitboxSize,
                      false);
+
     killImposter = new PowerUp("report", glm::vec2(0), TILE_SIZE, KILL_IMPOSTER);
     addObstacles = new PowerUp("powerup", glm::vec2(0), TILE_SIZE, ACTIVATE_OBS);
     killImposter->setCenter(maze->getTaskTilePosition(1));
@@ -83,6 +86,10 @@ void Game::Init() {
     cout << addObstacles->getCenter().x << " " << addObstacles->getCenter().y << "\n";
     SetProjection();
     SetImposterPosition();
+
+    auto youWinSize = glm::vec2(600.0f, 600.0f), youLostSize = glm::vec2(800.0f, 400.0f);
+    youWin = new Tile("you-win", glm::vec2(0.0f), youWinSize, false);
+    youLose = new Tile("you-lose", glm::vec2(0.0f), youLostSize, false);
 }
 
 
@@ -93,6 +100,9 @@ void Game::Update(float dt) {
 
     tile2->transformation.position = addObstacles->hitboxPos;
     tile2->transformation.scale = addObstacles->hitboxSize;
+
+    tile3->transformation.position = imp->hitboxPos;
+    tile3->transformation.scale = imp->hitboxSize;
     moveImposter();
 
     if (CheckCollisions(player, addObstacles)) {
@@ -120,51 +130,79 @@ void Game::Update(float dt) {
             }
         }
     }
+
+    if (CheckCollisions(player, maze->tiles.back()) and info.tasksCompleted == 2) {
+        State = GAME_WIN;
+    }
+
+    if (glfwGetTime() > 120.0f or (!imp->isDead and CheckCollisions(player, imp))) {
+        State = GAME_LOST;
+    }
+
+}
+
+void Game::clearColor(glm::vec4 color) {
+    glClearColor(color.x, color.y, color.z, color.w);
+    glClear(GL_COLOR_BUFFER_BIT);
+
 }
 
 
 void Game::Render() {
-    player->draw();
-    imp->draw();
 
-    for (auto x: maze->tiles) {
-        if ((x->isWall and x->getPosition().y < player->getPosition().y) or !x->isWall)
-            Renderer->DrawSprite(x);
-    }
+    if (State == GAME_ACTIVE) {
 
-    if (!killImposter->isActive) Renderer->DrawSprite(killImposter);
-    if (!addObstacles->isActive) Renderer->DrawSprite(addObstacles);
+        player->draw();
+        imp->draw();
 
-    for (auto x : maze->obstacles) {
-        if (!x->isActive) Renderer->DrawSprite(x);
-    }
+        for (auto x: maze->tiles) {
+            if ((x->isWall and x->getPosition().y < player->getPosition().y) or !x->isWall)
+                Renderer->DrawSprite(x);
+        }
 
-    Renderer->DrawSprite(player);
-    if (!imp->isDead) Renderer->DrawSprite(imp);
+        if (!killImposter->isActive) Renderer->DrawSprite(killImposter);
+        if (!addObstacles->isActive) Renderer->DrawSprite(addObstacles);
 
-    for (auto x: maze->tiles) {
-        if (x->isWall and x->getPosition().y >= player->getPosition().y)
-            Renderer->DrawSprite(x);
-    }
+        for (auto x : maze->obstacles) {
+            if (!x->isActive) Renderer->DrawSprite(x);
+        }
+
+        Renderer->DrawSprite(player);
+        if (!imp->isDead) Renderer->DrawSprite(imp);
+
+        for (auto x: maze->tiles) {
+            if (x->isWall and x->getPosition().y >= player->getPosition().y)
+                Renderer->DrawSprite(x);
+        }
 //    cout << "All Rendered" << "\n";
-    Renderer->DrawSprite(tile);
+//        Renderer->DrawSprite(tile);
 //    ---------+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //    Renderer->DrawSprite(tile2);
-//    Renderer->DrawSprite(tile3);
-    auto projection = camera->GetProjection(player->transformation.position);
-    std::stringstream time, health, tasks;
-    time << 120 - (int) glfwGetTime();
-    health << info.score;
-    tasks << info.tasksCompleted;
+//        Renderer->DrawSprite(tile3);
+        auto projection = camera->GetProjection(player->transformation.position);
+        std::stringstream time, health, tasks;
+        time << 120 - (int) glfwGetTime();
+        health << info.score;
+        tasks << info.tasksCompleted;
 
-    float hudTop = camera->top + 10, hupLeft = camera->right - 200;
-    Text->RenderText("HEALTH: " + health.str(), hupLeft, hudTop, 1.0f, projection);
-    Text->RenderText("TASKS: " + tasks.str() + " / 2", hupLeft, hudTop + 30, 1.0f, projection);
-    Text->RenderText("LIGHT: " + time.str(), hupLeft, hudTop + 30 * 2, 1.0f, projection);
-    Text->RenderText("TIME: " + time.str(), hupLeft, hudTop + 30 * 3, 1.0f, projection);
-    SetProjection();
+        float hudTop = camera->top + 10, hupLeft = camera->right - 200;
+        Text->RenderText("HEALTH: " + health.str(), hupLeft, hudTop, 1.0f, projection);
+        Text->RenderText("TASKS: " + tasks.str() + " / 2", hupLeft, hudTop + 30, 1.0f, projection);
+        Text->RenderText("LIGHT: " + time.str(), hupLeft, hudTop + 30 * 2, 1.0f, projection);
+        Text->RenderText("TIME: " + time.str(), hupLeft, hudTop + 30 * 3, 1.0f, projection);
 
-    cout << killImposter->isActive << " " << addObstacles->isActive << "\n";
+    } else {
+        clearColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        auto screenCenter = glm::vec2(camera->left, camera->top) + glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT) / 2.0f;
+        if (State == GAME_WIN) {
+            youWin->setCenter(screenCenter);
+            Renderer->DrawSprite(youWin);
+        } else if (State == GAME_LOST) {
+            youLose->setCenter(screenCenter);
+            Renderer->DrawSprite(youLose);
+        }
+    }
+
 }
 
 
@@ -220,28 +258,31 @@ void Game::SetProjection() {
 
 void Game::ProcessInput(float dt) {
 
-    float cameraFactor = 0.005f;
-    if (this->Keys[GLFW_KEY_J]) {
-        camera->SetZoom(camera->zoom - cameraFactor);
-    } else if (this->Keys[GLFW_KEY_K]) {
-        camera->SetZoom(camera->zoom + cameraFactor);
-    }
+    if (State == GAME_ACTIVE) {
 
-    bool moved = false;
-    if (this->Keys[GLFW_KEY_LEFT]) {
-        moved = movePlayer(LEFT, RIGHT);
-    }
-    if (this->Keys[GLFW_KEY_RIGHT]) {
-        moved = movePlayer(RIGHT, LEFT);
-    }
-    if (this->Keys[GLFW_KEY_UP]) {
-        moved = movePlayer(UP, DOWN);
-    }
-    if (this->Keys[GLFW_KEY_DOWN]) {
-        moved = movePlayer(DOWN, UP);
-    }
-    if (!moved) {
-        player->stop();
+        float cameraFactor = 0.005f;
+        if (this->Keys[GLFW_KEY_J]) {
+            camera->SetZoom(camera->zoom - cameraFactor);
+        } else if (this->Keys[GLFW_KEY_K]) {
+            camera->SetZoom(camera->zoom + cameraFactor);
+        }
+
+        bool moved = false;
+        if (this->Keys[GLFW_KEY_LEFT]) {
+            moved = movePlayer(LEFT, RIGHT);
+        }
+        if (this->Keys[GLFW_KEY_RIGHT]) {
+            moved = movePlayer(RIGHT, LEFT);
+        }
+        if (this->Keys[GLFW_KEY_UP]) {
+            moved = movePlayer(UP, DOWN);
+        }
+        if (this->Keys[GLFW_KEY_DOWN]) {
+            moved = movePlayer(DOWN, UP);
+        }
+        if (!moved) {
+            player->stop();
+        }
     }
 }
 
@@ -315,8 +356,11 @@ void Game::loadTiles() {
     ResourceManager::LoadTexture("../assets/tiles/brick-tile.png", true, "brick-tile");
     ResourceManager::LoadTexture("../assets/tiles/start-tile.png", true, "start-tile");
     ResourceManager::LoadTexture("../assets/tiles/trophy-tile.png", true, "trophy-tile");
+
     ResourceManager::LoadTexture("../assets/miscellaneous/report.png", true, "report");
     ResourceManager::LoadTexture("../assets/miscellaneous/powerup.png", true, "powerup");
     ResourceManager::LoadTexture("../assets/miscellaneous/coin.png", true, "coin");
     ResourceManager::LoadTexture("../assets/miscellaneous/bomb.png", true, "bomb");
+    ResourceManager::LoadTexture("../assets/miscellaneous/you-win.png", true, "you-win");
+    ResourceManager::LoadTexture("../assets/miscellaneous/you-lost.png", true, "you-lose");
 }

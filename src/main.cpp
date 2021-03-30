@@ -21,7 +21,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 
-
 Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char *argv[]) {
@@ -82,7 +81,8 @@ int main(int argc, char *argv[]) {
 
         // render
         // ------
-        glClearColor(0.39f, 0.58f, 0.92f, 1.0f);
+//        glClearColor(0.39f, 0.58f, 0.92f, 1.0f);
+        glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
         Breakout.Render();
 
