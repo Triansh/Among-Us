@@ -44,6 +44,8 @@ public:
     glm::vec2 getTaskTilePosition(int k);
 
     void makeObstacles();
+
+    glm::vec4 changeColor(glm::vec2 pos, glm::vec3 color);
 };
 
 

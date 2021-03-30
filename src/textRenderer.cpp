@@ -1,7 +1,7 @@
 /*******************************************************************
-** This code is part of Breakout.
+** This code is part of AmongUs.
 **
-** Breakout is free software: you can redistribute it and/or modify
+** AmongUs is free software: you can redistribute it and/or modify
 ** it under the terms of the CC BY 4.0 license as published by
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
@@ -94,16 +94,10 @@ void TextRenderer::Load(std::string font, unsigned int fontSize) {
     FT_Done_FreeType(ft);
 }
 
-void TextRenderer::RenderText(std::string text, float x, float y, float scale, glm::mat4 projection, glm::vec3 color) {
+void TextRenderer::RenderText(std::string text, float x, float y, float scale,  glm::vec3 color) {
     // activate corresponding render state
     this->TextShader.Use();
     this->TextShader.SetVector3f("textColor", color);
-//    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 1.0f));
-//    this->TextShader.SetMatrix4("model",model);
-    this->TextShader.SetMatrix4("projection",
-                                projection
-//                                glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f)
-                                , false);
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(this->VAO);

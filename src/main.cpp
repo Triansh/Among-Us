@@ -1,7 +1,7 @@
 /*******************************************************************
-** This code is part of Breakout.
+** This code is part of AmongUs.
 **
-** Breakout is free software: you can redistribute it and/or modify
+** AmongUs is free software: you can redistribute it and/or modify
 ** it under the terms of the CC BY 4.0 license as published by
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
@@ -21,7 +21,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 
-Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
+Game AmongUs(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char *argv[]) {
     glfwInit();
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 #endif
     glfwWindowHint(GLFW_RESIZABLE, false);
 
-    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "AmongUs", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     // glad: load all OpenGL function pointers
@@ -54,39 +54,44 @@ int main(int argc, char *argv[]) {
 
     // initialize game
     // ---------------
-    Breakout.Init();
+    AmongUs.Init();
 
     // deltaTime variables
     // -------------------
-    float deltaTime = 0.0f;
+    float deltaTime;
     float lastFrame = 0.0f;
 
     std::cout << "\n=====================================================================\n";
-
     while (!glfwWindowShouldClose(window)) {
         // calculate delta time
         // --------------------
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-        glfwPollEvents();
 
-        // manage user input
-        // -----------------
-        Breakout.ProcessInput(deltaTime);
+        if (deltaTime > (float) 1.0 / FPS) {
+            glfwPollEvents();
 
-        // update game state
-        // -----------------
-        Breakout.Update(deltaTime);
+            // manage user input
+            // -----------------
+            AmongUs.ProcessInput(deltaTime);
 
-        // render
-        // ------
+            // update game state
+            // -----------------
+            AmongUs.Update();
+
+            // render
+            // ------
 //        glClearColor(0.39f, 0.58f, 0.92f, 1.0f);
-        glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-        Breakout.Render();
+            glClearColor(0, 0, 0, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+            AmongUs.Render();
 
-        glfwSwapBuffers(window);
+            glfwSwapBuffers(window);
+            lastFrame = currentFrame;
+
+        }
+
+
     }
 
     // delete all resources as loaded using the resource manager
@@ -103,9 +108,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, true);
     if (key >= 0 && key < 1024) {
         if (action == GLFW_PRESS)
-            Breakout.Keys[key] = true;
+            AmongUs.Keys[key] = true;
         else if (action == GLFW_RELEASE)
-            Breakout.Keys[key] = false;
+            AmongUs.Keys[key] = false;
     }
 }
 

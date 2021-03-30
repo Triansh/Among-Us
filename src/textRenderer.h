@@ -1,7 +1,7 @@
 /*******************************************************************
-** This code is part of Breakout.
+** This code is part of AmongUs.
 **
-** Breakout is free software: you can redistribute it and/or modify
+** AmongUs is free software: you can redistribute it and/or modify
 ** it under the terms of the CC BY 4.0 license as published by
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
@@ -44,8 +44,7 @@ public:
     void Load(std::string font, unsigned int fontSize);
 
     // renders a string of text using the precompiled list of characters
-    void RenderText(std::string text, float x, float y, float scale, glm::mat4 projection,
-                    glm::vec3 color = glm::vec3(1.0f));
+    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1.0f));
 //    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1.0f));
 private:
 

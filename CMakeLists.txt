@@ -8,7 +8,7 @@ set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libraries")
 file(GLOB SOURCES "${SRC_DIR}/*.cpp")
 
 # Executable definition and properties
-add_executable(${PROJECT_NAME} ${SOURCES} src/spriteRenderer.cpp src/spriteRenderer.h src/game.cpp src/game.h src/shader.cpp src/shader.h src/texture.cpp src/texture.h src/resourceManager.cpp src/resourceManager.h src/main.cpp src/stb_image.h src/Sprite.cpp src/Sprite.h src/Transform.h src/Transform.cpp src/Animation2D.cpp src/Animation2D.h src/Player.cpp src/Player.h src/Surface.cpp src/Surface.h src/Maze.cpp src/Maze.h src/Camera2D.cpp src/Camera2D.h src/constants.h src/Tile.cpp src/Tile.h src/AnimatedSprite.cpp src/AnimatedSprite.h src/Imposter.cpp src/Imposter.h src/textRenderer.cpp src/textRenderer.h src/PowerUp.cpp src/PowerUp.h)
+add_executable(${PROJECT_NAME} ${SOURCES} src/spriteRenderer.cpp src/spriteRenderer.h src/game.cpp src/game.h src/shader.cpp src/shader.h src/texture.cpp src/texture.h src/resourceManager.cpp src/resourceManager.h src/main.cpp src/stb_image.h src/Sprite.cpp src/Sprite.h src/Transform.h src/Transform.cpp src/Animation2D.cpp src/Animation2D.h src/Player.cpp src/Player.h src/Maze.cpp src/Maze.h src/Camera2D.cpp src/Camera2D.h src/constants.h src/Tile.cpp src/Tile.h src/AnimatedSprite.cpp src/AnimatedSprite.h src/Imposter.cpp src/Imposter.h src/textRenderer.cpp src/textRenderer.h src/PowerUp.cpp src/PowerUp.h)
 target_include_directories(${PROJECT_NAME} PRIVATE "${SRC_DIR}")
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 

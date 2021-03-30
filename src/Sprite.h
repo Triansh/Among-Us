@@ -34,6 +34,8 @@ public:
     virtual void setHitbox();
 
     void addPosition(glm::vec2 pos);
+
+    void setColor(glm::vec3 color);
 };
 
 

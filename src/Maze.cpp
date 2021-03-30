@@ -37,21 +37,6 @@ void Maze::makeTiles() {
         }
         pos.y += TILE_SIZE.y;
     }
-
-    pos = glm::vec2(0.0f, 00.0f);
-    for (auto &i : pat) {
-        pos.x = 0.0f;
-        for (char j : i) {
-            if (j == 'S') {
-                tiles.push_back(new Tile("start-tile", pos, TILE_SIZE, false));
-            } else if (j == 'E') {
-                tiles.push_back(new Tile("trophy-tile", pos, TILE_SIZE, false));
-            }
-            pos.x += TILE_SIZE.x;
-        }
-        pos.y += TILE_SIZE.y;
-    }
-
 }
 
 int getIdx(int x, int y, vector<pair<int, pair<int, int> > > &cell_list) {
@@ -63,6 +48,7 @@ int getIdx(int x, int y, vector<pair<int, pair<int, int> > > &cell_list) {
     return -1;
 }
 
+
 void Maze::createMaze() {
 
     int m = MAZE_HEIGHT, n = MAZE_WIDTH;
@@ -73,11 +59,7 @@ void Maze::createMaze() {
 
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
-            if (!(i & 1) || !(j & 1))
-                maze[i][j] = '#';
-            else
-                maze[i][j] = ' ';
-
+            maze[i][j] = (!(i & 1) || !(j & 1)) ? '#' : ' ';
         }
     }
 
@@ -85,13 +67,12 @@ void Maze::createMaze() {
         for (int j = 1; j < N; j += 2) {
             maze[i][j] = ' ';
         }
-
     }
 
 
-    vector<pair<int, pair<int, int> > > cell_list;
+    vector<pair<int, pair<int, int> > > gridCells;
     vector<bool> visited(m * n, false);
-    stack<pair<int, pair<int, int> >> m_stack;
+    stack<pair<int, pair<int, int> >> st;
     random_device rdev;
     mt19937 rng(rdev());
     uniform_int_distribution<mt19937::result_type> dist100(1, 100);
@@ -101,13 +82,13 @@ void Maze::createMaze() {
 
     for (int i = 1; i < M; i += 2) {
         for (int j = 1; j < N; j += 2) {
-            cell_list.emplace_back(k, make_pair(i, j));
+            gridCells.emplace_back(k, make_pair(i, j));
             k++;
         }
     }
 
     int randIdx = (int) (dist100(rng) % m) * n;
-    m_stack.push(cell_list[randIdx]);
+    st.push(gridCells[randIdx]);
     visited[randIdx] = true;
     nVisited++;
 
@@ -116,30 +97,30 @@ void Maze::createMaze() {
 
         vector<int> neighbours;
         // North
-        if (m_stack.top().second.first > 1) {
-            if (maze[m_stack.top().second.first - 2][m_stack.top().second.second + 0] &&
-                !visited[getIdx(m_stack.top().second.first - 2, m_stack.top().second.second + 0, cell_list)]) {
+        if (st.top().second.first > 1) {
+            if (maze[st.top().second.first - 2][st.top().second.second + 0] &&
+                !visited[getIdx(st.top().second.first - 2, st.top().second.second + 0, gridCells)]) {
                 neighbours.push_back(0);
             }
         }
         // East
-        if (m_stack.top().second.second < N - 2) {
-            if (maze[m_stack.top().second.first + 0][m_stack.top().second.second + 2] &&
-                !visited[getIdx(m_stack.top().second.first + 0, m_stack.top().second.second + 2, cell_list)]) {
+        if (st.top().second.second < N - 2) {
+            if (maze[st.top().second.first + 0][st.top().second.second + 2] &&
+                !visited[getIdx(st.top().second.first + 0, st.top().second.second + 2, gridCells)]) {
                 neighbours.push_back(1);
             }
         }
         // South
-        if (m_stack.top().second.first < M - 2) {
-            if (maze[m_stack.top().second.first + 2][m_stack.top().second.second + 0] &&
-                !visited[getIdx(m_stack.top().second.first + 2, m_stack.top().second.second + 0, cell_list)]) {
+        if (st.top().second.first < M - 2) {
+            if (maze[st.top().second.first + 2][st.top().second.second + 0] &&
+                !visited[getIdx(st.top().second.first + 2, st.top().second.second + 0, gridCells)]) {
                 neighbours.push_back(2);
             }
         }
         // West
-        if (m_stack.top().second.second > 1) {
-            if (maze[m_stack.top().second.first + 0][m_stack.top().second.second - 2] &&
-                !visited[getIdx(m_stack.top().second.first + 0, m_stack.top().second.second - 2, cell_list)]) {
+        if (st.top().second.second > 1) {
+            if (maze[st.top().second.first + 0][st.top().second.second - 2] &&
+                !visited[getIdx(st.top().second.first + 0, st.top().second.second - 2, gridCells)]) {
                 neighbours.push_back(3);
             }
         }
@@ -150,39 +131,43 @@ void Maze::createMaze() {
             // Create a path between this cell and neighbour
             switch (next_cell_dir) {
                 case 0: // North
-                    maze[m_stack.top().second.first - 1][m_stack.top().second.second + 0] = ' ';
-                    m_stack.push(cell_list[getIdx(m_stack.top().second.first - 2, m_stack.top().second.second + 0,
-                                                  cell_list)]);
+                    maze[st.top().second.first - 1][st.top().second.second + 0] = ' ';
+                    st.push(gridCells[getIdx(st.top().second.first - 2, st.top().second.second + 0,
+                                             gridCells)]);
                     break;
                 case 1: // East
-                    maze[m_stack.top().second.first + 0][m_stack.top().second.second + 1] = ' ';
-                    m_stack.push(cell_list[getIdx(m_stack.top().second.first + 0, m_stack.top().second.second + 2,
-                                                  cell_list)]);
+                    maze[st.top().second.first + 0][st.top().second.second + 1] = ' ';
+                    st.push(gridCells[getIdx(st.top().second.first + 0, st.top().second.second + 2,
+                                             gridCells)]);
                     break;
                 case 2: // South
-                    maze[m_stack.top().second.first + 1][m_stack.top().second.second + 0] = ' ';
-                    m_stack.push(cell_list[getIdx(m_stack.top().second.first + 2, m_stack.top().second.second + 0,
-                                                  cell_list)]);
+                    maze[st.top().second.first + 1][st.top().second.second + 0] = ' ';
+                    st.push(gridCells[getIdx(st.top().second.first + 2, st.top().second.second + 0,
+                                             gridCells)]);
                     break;
                 case 3: // West
-                    maze[m_stack.top().second.first + 0][m_stack.top().second.second - 1] = ' ';
-                    m_stack.push(cell_list[getIdx(m_stack.top().second.first + 0, m_stack.top().second.second - 2,
-                                                  cell_list)]);
+                    maze[st.top().second.first + 0][st.top().second.second - 1] = ' ';
+                    st.push(gridCells[getIdx(st.top().second.first + 0, st.top().second.second - 2,
+                                             gridCells)]);
                 default:
                     break;
             }
 
-            visited[m_stack.top().first] = true;
+            visited[st.top().first] = true;
             nVisited++;
         } else {
-            m_stack.pop();
+            st.pop();
         }
     }
 
     for (int i = 1; i < M - 1; i++) {
         for (int j = 1; j < N - 1; j++) {
             if (maze[i][j] == '#') {
-                if (dist100(rng) % 100 < 13) {
+                if (dist100(rng) % 100 < 20) {
+                    if (maze[i][j + 1] == '#' and maze[i + 1][j] == '#') continue;
+                    if (maze[i][j + 1] == '#' and maze[i - 1][j] == '#') continue;
+                    if (maze[i][j - 1] == '#' and maze[i + 1][j] == '#') continue;
+                    if (maze[i][j - 1] == '#' and maze[i - 1][j] == '#') continue;
                     maze[i][j] = ' ';
                 }
             }
@@ -207,6 +192,20 @@ int Maze::getIdFromPos(glm::vec2 pos) const {
     int j = pos.x / TILE_SIZE.x;
     int i = pos.y / TILE_SIZE.y;
     return N * i + j;
+}
+
+glm::vec4 Maze::changeColor(glm::vec2 pos, glm::vec3 color) {
+    int id = getIdFromPos(pos);
+    auto mini = glm::vec2(100000.0f, 100000.0f), maxi = glm::vec2(-300.0f, -300.0f);
+    int x = id / N, y = id % N;
+    for (int i = max(0, x - 1); i <= min(M, x + 1); i++) {
+        for (int j = max(0, y - 1); j <= min(y + 1, N); j++) {
+            tiles[i * N + j]->setColor(color);
+            mini = min(mini, tiles[i * N + j]->getPosition());
+            maxi = max(maxi, tiles[i * N + j]->getPosition() + TILE_SIZE);
+        }
+    }
+    return glm::vec4(mini, maxi);
 }
 
 char Maze::runDjkstra(glm::vec2 destination, glm::vec2 begin) {

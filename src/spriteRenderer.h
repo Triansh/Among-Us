@@ -1,7 +1,7 @@
 /*******************************************************************
-** This code is part of Breakout.
+** This code is part of AmongUs.
 **
-** Breakout is free software: you can redistribute it and/or modify
+** AmongUs is free software: you can redistribute it and/or modify
 ** it under the terms of the CC BY 4.0 license as published by
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
@@ -21,22 +21,22 @@
 class SpriteRenderer {
 public:
     // Constructor (inits shaders/shapes)
-    SpriteRenderer(Shader &shader, bool skew = false);
+    SpriteRenderer(Shader &shader);
 
     // Destructor
     ~SpriteRenderer();
 
     // Renders a defined quad textured with given sprite
-    void DrawSprite(Sprite *sp);
+    virtual void DrawSprite(Sprite *sp);
 
-private:
+protected:
     // Render state
     Shader shader;
-    bool skew;
     unsigned int quadVAO{};
 
     // Initializes and configures the quad's buffer and vertex attributes
-    void initRenderData();
+    virtual void initRenderData();
+
     void bind();
 };
 

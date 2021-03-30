@@ -5,9 +5,9 @@
 #ifndef AMONGUS_GAME_H
 #define AMONGUS_GAME_H
 /*******************************************************************
-** This code is part of Breakout.
+** This code is part of AmongUs.
 **
-** Breakout is free software: you can redistribute it and/or modify
+** AmongUs is free software: you can redistribute it and/or modify
 ** it under the terms of the CC BY 4.0 license as published by
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
@@ -29,14 +29,18 @@ enum GameState {
 };
 
 typedef struct Info {
-    int score;
+    float score;
     int tasksCompleted;
-    int health;
+    int clock;
+    bool lighting;
+    glm::vec4 lightArea;
 
     Info() {
-        score = 0;
+        score = 1;
         tasksCompleted = 0;
-        health = 1;
+        clock = 180;
+        lighting = true;
+        lightArea = glm::vec4(0.0f);
     }
 
 } Info;
@@ -67,7 +71,7 @@ public:
     void SetProjection();
 
 
-    void Update(float dt);
+    void Update();
 
     void Render();
 
@@ -90,6 +94,12 @@ public:
     static bool CheckTileCollisions(Sprite *sprite);
 
     static void clearColor(glm::vec4 color);
+
+    void switchLights(bool lightOff);
+
+    bool checkInsideLightArea(glm::vec2 pos);
+
+    void renderHUD() const;
 };
 
 #endif
