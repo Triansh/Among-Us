@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 
             // manage user input
             // -----------------
-            AmongUs.ProcessInput(deltaTime);
+            AmongUs.ProcessInput();
 
             // update game state
             // -----------------
@@ -81,8 +81,7 @@ int main(int argc, char *argv[]) {
 
             // render
             // ------
-//        glClearColor(0.39f, 0.58f, 0.92f, 1.0f);
-            glClearColor(0, 0, 0, 1);
+            glClearColor(0.39f, 0.58f, 0.92f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             AmongUs.Render();
 
@@ -90,8 +89,6 @@ int main(int argc, char *argv[]) {
             lastFrame = currentFrame;
 
         }
-
-
     }
 
     // delete all resources as loaded using the resource manager

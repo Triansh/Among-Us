@@ -35,7 +35,7 @@ TextRenderer::TextRenderer(unsigned int width, unsigned int height) {
     glBindVertexArray(0);
 }
 
-void TextRenderer::Load(std::string font, unsigned int fontSize) {
+void TextRenderer::Load(const std::string& font, unsigned int fontSize) {
     // first clear the previously loaded Characters
     this->Characters.clear();
     // then initialize and load the FreeType library

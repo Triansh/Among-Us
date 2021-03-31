@@ -24,7 +24,6 @@ public:
     void setHitbox() override;
 
     bool checkTarget();
-
 };
 
 

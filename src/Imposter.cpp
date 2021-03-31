@@ -15,23 +15,19 @@ Imposter::Imposter() : AnimatedSprite("imposter-left_00", glm::vec2(200.f, 200.f
         runLeftAnimNames.push_back(Lname);
         runRightAnimNames.push_back(Rname);
     }
+    reverse(runLeftAnimNames.begin(), runLeftAnimNames.end());
 
-//    reverse(runLeftAnimNames.begin(), runLeftAnimNames.end());
-
-    auto *runLeftAnimation = new Animation2D(30, runLeftAnimNames);
-    auto *runRightAnimation = new Animation2D(30, runRightAnimNames);
+    auto *runLeftAnimation = new Animation2D(24, runLeftAnimNames);
+    auto *runRightAnimation = new Animation2D(24, runRightAnimNames);
     addAnimation(RunLeft, runLeftAnimation);
     addAnimation(RunRight, runRightAnimation);
 
     speed = 5.0f;
     isDead = false;
     setHitbox();
-
 }
 
 void Imposter::move() {
-
-    auto oldAnim = currAnim;
 
     if (target.x == getCenter().x) {
         transformation.position.y += speed * (target.y < getCenter().y ? -1.0f : 1.0f);
@@ -39,9 +35,6 @@ void Imposter::move() {
         transformation.position.x += speed * (target.x < getCenter().x ? -1.0f : 1.0f);
         currAnim = target.x < getCenter().x ? RunLeft : RunRight;
     }
-
-    if (oldAnim != currAnim) stopAnimation(oldAnim);
-
     setHitbox();
 }
 
@@ -51,7 +44,6 @@ void Imposter::setHitbox() {
 }
 
 bool Imposter::checkTarget() {
-//    cout << getCenter().x << " " << getCenter().y << " " << target.x << " " << target.y << "\n";
     return getCenter() == target;
 }
 

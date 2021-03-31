@@ -19,22 +19,18 @@ glm::vec2 Sprite::getPosition() const {
     return transformation.position;
 }
 
-
-void Sprite::setHitbox() {
-
-}
+void Sprite::setHitbox() {}
 
 glm::vec2 Sprite::getCenter() const {
     return transformation.position + (transformation.scale / 2.0f);
 }
 
 void Sprite::setCenter(glm::vec2 pos) {
-
     transformation.position = pos - transformation.scale / 2.0f;
     setHitbox();
 }
 
-void Sprite::setColor(glm::vec3 color){
+void Sprite::setColor(glm::vec3 color) {
     this->color = color;
 }
 

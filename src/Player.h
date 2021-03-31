@@ -9,9 +9,7 @@
 #include "AnimatedSprite.h"
 #include "constants.h"
 
-
 class Player : public AnimatedSprite {
-
 
 public:
     Player();

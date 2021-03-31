@@ -11,14 +11,13 @@
 
 class Maze {
 
-
 public:
     Maze();
 
     void createMaze();
 
     vector<Tile *> tiles;
-    vector<PowerUp*> obstacles;
+    vector<PowerUp *> obstacles;
     vector<string> pat;
     int M, N;
 
@@ -28,18 +27,17 @@ public:
 
     int getIdFromPos(glm::vec2 pos) const;
 
-
     char runDjkstra(glm::vec2 destination, glm::vec2 begin);
 
     char getDirection(int beginId, int nextId) const;
 
     glm::vec2 getImposterPos();
+
     void displayMaze();
 
     void makeTiles();
 
     int verifyDestination(glm::vec2 vec);
-
 
     glm::vec2 getTaskTilePosition(int k);
 

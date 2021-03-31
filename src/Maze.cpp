@@ -1,6 +1,3 @@
-//
-// Created by triansh on 24/03/21.
-//
 #include <iostream>
 #include <queue>
 #include <stack>
@@ -163,7 +160,7 @@ void Maze::createMaze() {
     for (int i = 1; i < M - 1; i++) {
         for (int j = 1; j < N - 1; j++) {
             if (maze[i][j] == '#') {
-                if (dist100(rng) % 100 < 20) {
+                if (dist100(rng) % 100 < 17) {
                     if (maze[i][j + 1] == '#' and maze[i + 1][j] == '#') continue;
                     if (maze[i][j + 1] == '#' and maze[i - 1][j] == '#') continue;
                     if (maze[i][j - 1] == '#' and maze[i + 1][j] == '#') continue;
@@ -198,8 +195,8 @@ glm::vec4 Maze::changeColor(glm::vec2 pos, glm::vec3 color) {
     int id = getIdFromPos(pos);
     auto mini = glm::vec2(100000.0f, 100000.0f), maxi = glm::vec2(-300.0f, -300.0f);
     int x = id / N, y = id % N;
-    for (int i = max(0, x - 1); i <= min(M, x + 1); i++) {
-        for (int j = max(0, y - 1); j <= min(y + 1, N); j++) {
+    for (int i = max(0, x - 1); i <= min(M - 1, x + 1); i++) {
+        for (int j = max(0, y - 1); j <= min(y + 1, N - 1); j++) {
             tiles[i * N + j]->setColor(color);
             mini = min(mini, tiles[i * N + j]->getPosition());
             maxi = max(maxi, tiles[i * N + j]->getPosition() + TILE_SIZE);
@@ -337,9 +334,9 @@ void Maze::makeObstacles() {
             if (pat[i][j] == ' ' and dist100(rng) % 100 < 10) {
                 PowerUp *pup;
                 if (dist100(rng) % 3 < 1) {
-                    pup = new PowerUp("bomb", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.5f, BOMB);
+                    pup = new PowerUp("bomb", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.3f, BOMB);
                 } else {
-                    pup = new PowerUp("coin", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.5f, COIN);
+                    pup = new PowerUp("coin", tiles[i * N + j]->getPosition(), TILE_SIZE / 1.3f, COIN);
                 }
                 pup->setCenter(tiles[i * N + j]->getCenter());
                 obstacles.push_back(pup);

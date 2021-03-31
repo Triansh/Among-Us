@@ -13,11 +13,10 @@ Player::Player() : AnimatedSprite("player-right-idle", glm::vec2(200.f, 0.f), 3.
         runLeftAnimNames.push_back(Lname);
         runRightAnimNames.push_back(Rname);
     }
-
     reverse(runRightAnimNames.begin(), runRightAnimNames.end());
 
-    auto *runLeftAnimation = new Animation2D(48, runLeftAnimNames);
-    auto *runRightAnimation = new Animation2D(48, runRightAnimNames);
+    auto *runLeftAnimation = new Animation2D(40, runLeftAnimNames);
+    auto *runRightAnimation = new Animation2D(40, runRightAnimNames);
     auto *idleLeftAnimation = new Animation2D(1, idleLeftAnimNames);
     auto *idleRightAnimation = new Animation2D(1, idleRightAnimNames);
     addAnimation(RunLeft, runLeftAnimation);
@@ -26,11 +25,9 @@ Player::Player() : AnimatedSprite("player-right-idle", glm::vec2(200.f, 0.f), 3.
     addAnimation(IdleRight, idleRightAnimation);
     this->speed = 8.0f;
     setHitbox();
-
 }
 
- void Player::move(MovementType mt) {
-
+void Player::move(MovementType mt) {
     if (mt == RIGHT) {
         addPosition(glm::vec2(speed, 0.0f));
     }
@@ -43,7 +40,6 @@ Player::Player() : AnimatedSprite("player-right-idle", glm::vec2(200.f, 0.f), 3.
     if (mt == DOWN) {
         addPosition(glm::vec2(0.0f, speed));
     }
-
     setHitbox();
 }
 

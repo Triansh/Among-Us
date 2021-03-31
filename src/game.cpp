@@ -17,15 +17,11 @@
 #include "PowerUp.h"
 #include "textRenderer.h"
 
-
-// Game-related State data
-//#3C4A4A -> 60,74,74
 SpriteRenderer *Renderer;
 Camera2D *camera;
 Player *player;
 Imposter *imp;
 Maze *maze;
-Tile *tile, *tile2, *tile3;
 Tile *youWin, *youLose;
 Tile *endTile, *startTile;
 PowerUp *killImposter, *addObstacles;
@@ -38,8 +34,13 @@ Game::Game(unsigned int width, unsigned int height)
 
 Game::~Game() {
     delete Renderer;
+    delete camera;
+    delete player;
+    delete imp;
+    delete maze;
+    delete youWin;
+    delete youLose;
 }
-
 
 void Game::Init() {
 
@@ -63,7 +64,6 @@ void Game::Init() {
     std::cout << getenv("PWD") << "\n";
     std::cout << "\n=====================================================================\n";
 
-
     loadPlayer();
     loadImposter();
     loadTiles();
@@ -72,11 +72,6 @@ void Game::Init() {
     player = new Player();
     imp = new Imposter();
     camera = new Camera2D(player->getPosition());
-
-    tile = new Tile("grass-tile", imp->hitboxPos, imp->hitboxSize, false);
-    tile2 = new Tile("transparent", glm::vec2(200, 200), glm::vec2(200, 200), false);
-    tile3 = new Tile("brick-tile", maze->tiles[0 + maze->N + 1]->hitboxPos, maze->tiles[0 + maze->N + 1]->hitboxSize,
-                     false);
 
     unsigned int tileStartId = 1, tileEndId = maze->tiles.size() - 2;
     startTile = new Tile("start-tile", maze->tiles[tileStartId]->getPosition(), TILE_SIZE, false);
@@ -98,16 +93,8 @@ void Game::Init() {
 
 void Game::Update() {
     SetProjection();
-    tile->transformation.position = player->hitboxPos;
-    tile->transformation.scale = player->hitboxSize;
-
-    tile2->setCenter(player->getCenter());
-
-    tile3->transformation.position = imp->hitboxPos;
-    tile3->transformation.scale = imp->hitboxSize;
     moveImposter();
     switchLights(!info.lighting);
-
 
     if (CheckCollisions(player, addObstacles)) {
         if (addObstacles->activate()) {
@@ -129,13 +116,13 @@ void Game::Update() {
                 if (obs->type == COIN) {
                     info.score += 50;
                 } else {
-                    info.score -= 20;
+                    info.score -= 60;
                 }
             }
         }
     }
 
-    if (CheckCollisions(player, maze->tiles.back()) and info.tasksCompleted == 2) {
+    if (CheckCollisions(player, endTile) and info.tasksCompleted == 2) {
         State = GAME_WIN;
     }
 
@@ -144,9 +131,7 @@ void Game::Update() {
     }
 
     info.score += (!info.lighting ? 2.0f : 1.0f) / FPS;
-
 }
-
 
 void Game::Render() {
 
@@ -179,11 +164,6 @@ void Game::Render() {
             if (x->isWall and x->getPosition().y >= player->getPosition().y)
                 Renderer->DrawSprite(x);
         }
-        Renderer->DrawSprite(tile);
-//        Renderer->DrawSprite(tile3);
-
-
-
         renderHUD();
 
     } else {
@@ -228,7 +208,6 @@ void Game::switchLights(bool lightOff) {
     info.lightArea = maze->changeColor(pos, color);
 }
 
-
 bool Game::checkInsideLightArea(glm::vec2 pos) {
 
     if (info.lighting) return true;
@@ -239,13 +218,13 @@ bool Game::checkInsideLightArea(glm::vec2 pos) {
     return (pos.x >= minx and pos.x <= maxx and pos.y >= miny and pos.y <= maxy);
 }
 
-
-void Game::ProcessInput(float dt) {
+void Game::ProcessInput() {
 
     if (State == GAME_ACTIVE) {
 
         if (this->Keys[GLFW_KEY_L]) {
             info.lighting = !info.lighting;
+            Keys[GLFW_KEY_L] = false;
         }
 
         float cameraFactor = 0.005f;
@@ -295,7 +274,6 @@ bool Game::movePlayer(MovementType dir, MovementType oppDir) {
     return true;
 }
 
-
 void Game::moveImposter() {
     if (imp->checkTarget()) {
         char dir = maze->runDjkstra(player->getCenter(), imp->getCenter());
@@ -322,7 +300,6 @@ void Game::SetProjection() {
     glm::mat4 projection = camera->GetProjection(player->transformation.position);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection, true);
     ResourceManager::GetShader("text").SetMatrix4("projection", projection, true);
-
 }
 
 void Game::clearColor(glm::vec4 color) {
@@ -350,7 +327,6 @@ bool Game::CheckTileCollisions(Sprite *sprite) {
     return collided;
 }
 
-
 void Game::loadPlayer() {
     for (int i = 0; i < 24; i++) {
         std::string fileR, fileL, nameL, nameR;
@@ -369,14 +345,13 @@ void Game::loadPlayer() {
     }
     ResourceManager::LoadTexture("../assets/sprites/player/stand-left.png", true, "player-left-idle");
     ResourceManager::LoadTexture("../assets/sprites/player/stand-right.png", true, "player-right-idle");
-
 }
 
 void Game::loadImposter() {
     for (int i = 0; i < 15; i++) {
         std::string fileR, fileL, nameL, nameR;
-        fileL = "../assets/sprites/imp2/run-left/tile0";
-        fileR = "../assets/sprites/imp2/run-right/tile0";
+        fileL = "../assets/sprites/imposter/run-left/tile0";
+        fileR = "../assets/sprites/imposter/run-right/tile0";
         fileL = fileL.append(i < 10 ? "0" : "") + std::to_string(i) + ".png";
         fileR = fileR.append(i < 10 ? "0" : "") + std::to_string(i) + ".png";
 
@@ -388,7 +363,6 @@ void Game::loadImposter() {
         ResourceManager::LoadTexture(fileL, true, nameL);
         ResourceManager::LoadTexture(fileR, true, nameR);
     }
-
 }
 
 void Game::loadTiles() {

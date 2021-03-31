@@ -7,7 +7,6 @@
 
 AnimatedSprite::AnimatedSprite(const std::string &textureName, glm::vec2 position, glm::vec2 scale, float rotation,
                                glm::vec3 color) : Sprite(textureName, position, scale, rotation, color) {
-
     anims = {};
     currAnim = None;
 }

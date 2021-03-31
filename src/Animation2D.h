@@ -22,6 +22,7 @@ public:
     Animation2D(float fps, vector<string> &textures);
 
     void play();
+
     void stop();
 
     string getAnimation();

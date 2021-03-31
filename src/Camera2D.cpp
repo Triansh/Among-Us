@@ -25,13 +25,11 @@ glm::mat4 Camera2D::GetProjection(glm::vec2 target) {
     bottom = top + height;
 
     glm::mat4 ortho = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
-//    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(zoom, zoom, zoom));
 
     return ortho;
 }
 
 void Camera2D::SetZoom(float zoomIn) {
     zoom = max(0.40f, min(zoomIn, 1.50f));
-
 }
 

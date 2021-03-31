@@ -66,7 +66,7 @@ public:
     void Init();
 
     // game loop
-    void ProcessInput(float dt);
+    void ProcessInput();
 
     void SetProjection();
 

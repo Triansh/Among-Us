@@ -18,7 +18,6 @@ void PowerUp::setHitbox() {
 }
 
 bool PowerUp::activate() {
-    cout << "activated!!\n";
     auto x = isActive;
     isActive = true;
     return !x;
