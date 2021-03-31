@@ -1,7 +1,3 @@
-//
-// Created by triansh on 26/03/21.
-//
-
 #ifndef AMONGUS_ANIMATEDSPRITE_H
 #define AMONGUS_ANIMATEDSPRITE_H
 

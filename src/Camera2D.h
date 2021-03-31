@@ -1,13 +1,8 @@
-//
-// Created by triansh on 25/03/21.
-//
-
 #ifndef AMONGUS_CAMERA2D_H
 #define AMONGUS_CAMERA2D_H
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
 
 class Camera2D {
 

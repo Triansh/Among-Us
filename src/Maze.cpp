@@ -76,8 +76,7 @@ void Maze::createMaze() {
         }
         // Neighbours available?
         if (!neighbours.empty()) {
-            // Choose a random direction
-            // Create a path between this cell and neighbour
+            // Choosing a random direction and making a path between this cell and neighbour
             switch (neighbours[dist100(rng) % neighbours.size()]) {
                 case 0: // North
                     maze[x - 1][y + 0] = ' ';

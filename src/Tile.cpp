@@ -1,7 +1,3 @@
-//
-// Created by triansh on 25/03/21.
-//
-
 #include "Tile.h"
 
 

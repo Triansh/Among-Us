@@ -1,19 +1,5 @@
-//
-// Created by triansh on 23/03/21.
-//
-
 #ifndef AMONGUS_GAME_H
 #define AMONGUS_GAME_H
-/*******************************************************************
-** This code is part of AmongUs.
-**
-** AmongUs is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
-#ifndef GAME_H
-#define GAME_H
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -68,8 +54,7 @@ public:
     // game loop
     void ProcessInput();
 
-    void SetProjection();
-
+    static void SetProjection();
 
     void Update();
 
@@ -77,17 +62,15 @@ public:
 
     static void loadPlayer();
 
-
     static void loadTiles();
 
     static void loadImposter();
 
-
     static bool movePlayer(MovementType dir, MovementType oppDir);
 
-    void moveImposter();
+    static void moveImposter();
 
-    void SetImposterPosition();
+    static void SetImposterPosition();
 
     static bool CheckCollisions(Sprite *sprite, Sprite *collider);
 
@@ -97,10 +80,9 @@ public:
 
     void switchLights(bool lightOff);
 
-    bool checkInsideLightArea(glm::vec2 pos);
+    bool checkInsideLightArea(glm::vec2 pos) const;
 
     void renderHUD() const;
 };
 
-#endif
 #endif //AMONGUS_GAME_H

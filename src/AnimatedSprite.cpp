@@ -1,7 +1,3 @@
-//
-// Created by triansh on 26/03/21.
-//
-
 #include "AnimatedSprite.h"
 #include "resourceManager.h"
 

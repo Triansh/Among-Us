@@ -1,10 +1,5 @@
-//
-// Created by triansh on 29/03/21.
-//
-
 #ifndef AMONGUS_POWERUP_H
 #define AMONGUS_POWERUP_H
-
 
 #include "Sprite.h"
 

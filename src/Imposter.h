@@ -1,10 +1,5 @@
-//
-// Created by triansh on 26/03/21.
-//
-
 #ifndef AMONGUS_IMPOSTER_H
 #define AMONGUS_IMPOSTER_H
-
 
 #include "AnimatedSprite.h"
 #include "constants.h"
@@ -19,7 +14,7 @@ public:
 
     float speed;
     bool isDead;
-    glm::vec2 target;
+    glm::vec2 target{};
 
     void setHitbox() override;
 

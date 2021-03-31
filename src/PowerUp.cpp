@@ -1,7 +1,3 @@
-//
-// Created by triansh on 29/03/21.
-//
-
 #include "PowerUp.h"
 
 PowerUp::PowerUp(const string &textureName, glm::vec2 position, glm::vec2 scale, PowerUpType type, float rotation,

@@ -1,7 +1,3 @@
-//
-// Created by triansh on 25/03/21.
-//
-
 #ifndef AMONGUS_TILE_H
 #define AMONGUS_TILE_H
 
@@ -18,6 +14,5 @@ public:
     void setHitbox() override;
 
 };
-
 
 #endif //AMONGUS_TILE_H

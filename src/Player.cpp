@@ -1,5 +1,5 @@
-#include "Player.h"
 #include <algorithm>
+#include "Player.h"
 
 Player::Player() : AnimatedSprite("player-right-idle", glm::vec2(200.f, 10.f), 3.80f * glm::vec2(30, 40)) {
 

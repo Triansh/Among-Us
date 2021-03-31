@@ -1,7 +1,5 @@
-
 #include "Sprite.h"
 #include "resourceManager.h"
-
 
 Sprite::Sprite(const std::string &textureName, glm::vec2 position, glm::vec2 scale, float rotation, glm::vec3 color) {
     texture = ResourceManager::GetTexture(textureName);

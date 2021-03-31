@@ -1,4 +1,3 @@
-
 #ifndef AMONGUS_SPRITE_H
 #define AMONGUS_SPRITE_H
 

@@ -1,7 +1,3 @@
-//
-// Created by triansh on 24/03/21.
-//
-
 #include <GLFW/glfw3.h>
 #include "Animation2D.h"
 

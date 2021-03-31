@@ -1,11 +1,3 @@
-/*******************************************************************
-** This code is part of AmongUs.
-**
-** AmongUs is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
@@ -209,7 +201,7 @@ void Game::switchLights(bool lightOff) {
     info.lightArea = maze->changeColor(pos, color);
 }
 
-bool Game::checkInsideLightArea(glm::vec2 pos) {
+bool Game::checkInsideLightArea(glm::vec2 pos) const {
 
     if (info.lighting) return true;
 

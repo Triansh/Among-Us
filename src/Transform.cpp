@@ -1,6 +1,3 @@
-//
-// Created by triansh on 24/03/21.
-//
 #include "Transform.h"
 
 Transform::Transform(glm::vec2 position, glm::vec2 scale, float angle) {
@@ -21,7 +18,6 @@ glm::mat4 Transform::Get() {
     glm::mat4 scaling = glm::scale(glm::mat4(1.0f), glm::vec3(scale, 1.0f));
 
     return translation * scaling * rotation;
-
 }
 
 

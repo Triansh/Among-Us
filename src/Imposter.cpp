@@ -1,9 +1,5 @@
-//
-// Created by triansh on 26/03/21.
-//
-
-#include "Imposter.h"
 #include <algorithm>
+#include "Imposter.h"
 
 Imposter::Imposter() : AnimatedSprite("imposter-left_00", glm::vec2(200.f, 200.f), 5.0f * glm::vec2(30, 30)) {
 

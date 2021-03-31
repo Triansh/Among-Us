@@ -1,15 +1,4 @@
-/*******************************************************************
-** This code is part of AmongUs.
-**
-** AmongUs is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
-#include <iostream>
-
 #include "texture.h"
-
 
 Texture2D::Texture2D()
         : Width(0), Height(0), Internal_Format(GL_RGBA), Image_Format(GL_RGBA), Wrap_S(GL_REPEAT), Wrap_T(GL_REPEAT),

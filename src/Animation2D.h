@@ -1,10 +1,5 @@
-//
-// Created by triansh on 24/03/21.
-//
-
 #ifndef AMONGUS_ANIMATION2D_H
 #define AMONGUS_ANIMATION2D_H
-
 
 #include<iostream>
 #include <vector>
