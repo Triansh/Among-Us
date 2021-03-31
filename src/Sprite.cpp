@@ -19,6 +19,10 @@ glm::vec2 Sprite::getPosition() const {
     return transformation.position;
 }
 
+glm::vec2 Sprite::getSize() const {
+    return transformation.scale;
+}
+
 void Sprite::setHitbox() {}
 
 glm::vec2 Sprite::getCenter() const {

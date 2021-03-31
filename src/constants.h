@@ -5,7 +5,7 @@
 #ifndef AMONGUS_CONSTANTS_H
 #define AMONGUS_CONSTANTS_H
 
-const unsigned int FPS = 40;
+const unsigned int FPS = 48;
 
 const unsigned int SCREEN_WIDTH = 1600;
 // The height of the screen

@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <algorithm>
 
-Player::Player() : AnimatedSprite("player-right-idle", glm::vec2(200.f, 0.f), 3.80f * glm::vec2(30, 40)) {
+Player::Player() : AnimatedSprite("player-right-idle", glm::vec2(200.f, 10.f), 3.80f * glm::vec2(30, 40)) {
 
     vector<string> runRightAnimNames, runLeftAnimNames;
     vector<string> idleRightAnimNames = {"player-right-idle"};

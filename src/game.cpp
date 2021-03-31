@@ -146,7 +146,7 @@ void Game::Render() {
         }
 
         if (checkInsideLightArea(startTile->getCenter()))Renderer->DrawSprite(startTile);
-        if (checkInsideLightArea(endTile->getCenter())) Renderer->DrawSprite(endTile);
+        if (checkInsideLightArea(endTile->getCenter()) and info.tasksCompleted == 2) Renderer->DrawSprite(endTile);
 
         if (!killImposter->isActive and checkInsideLightArea(killImposter->getCenter()))
             Renderer->DrawSprite(killImposter);
@@ -168,7 +168,8 @@ void Game::Render() {
 
     } else {
         clearColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        auto screenCenter = glm::vec2(camera->left, camera->top) + glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT) / 2.0f;
+        auto screenCenter =
+                glm::vec2(camera->left, camera->top) + glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT) / 2.0f / camera->zoom;
         if (State == GAME_WIN) {
             youWin->setCenter(screenCenter);
             Renderer->DrawSprite(youWin);
@@ -255,6 +256,7 @@ void Game::ProcessInput() {
 
 bool Game::movePlayer(MovementType dir, MovementType oppDir) {
 
+
     player->move(dir);
     auto oldAnim = player->currAnim;
     if (dir == DOWN or dir == UP) {
@@ -267,10 +269,18 @@ bool Game::movePlayer(MovementType dir, MovementType oppDir) {
         player->currAnim = RunRight;
     }
 
+    if (player->getPosition().y < 0 or
+        player->getPosition().y + player->getSize().y >= (2 * MAZE_HEIGHT + 1) * TILE_SIZE.y) {
+        player->move(oppDir);
+        return false;
+    }
+
     if (!CheckTileCollisions(player)) {
         return true;
     }
+
     player->move(oppDir);
+
     return true;
 }
 

@@ -19,7 +19,7 @@ public:
     vector<Tile *> tiles;
     vector<PowerUp *> obstacles;
     vector<string> pat;
-    int M, N;
+    int M{}, N{};
 
     vector<vector<int>> adj;
 
@@ -44,6 +44,8 @@ public:
     void makeObstacles();
 
     glm::vec4 changeColor(glm::vec2 pos, glm::vec3 color);
+
+    static int getIdx(int x, int y, vector<pair<int, pair<int, int>>> &cells);
 };
 
 

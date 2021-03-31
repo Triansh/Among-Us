@@ -36,6 +36,8 @@ public:
     void addPosition(glm::vec2 pos);
 
     void setColor(glm::vec3 color);
+
+    glm::vec2 getSize() const;
 };
 
 
