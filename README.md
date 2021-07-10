@@ -1,5 +1,7 @@
-# Among-Us
+# Escape Out
 This game’s objective is to exit a maze you have been dropped into after finishing two tasks. 
+ * Report the imposter
+ * Activate the collectibles
 
 ## Installation
 
@@ -13,7 +15,7 @@ Run the following commands to open the game window.
 $ mkdir build && cd build
 $ cmake ..
 $ make 
-$ ./AmongUs
+$ ./EscapeOut
 ```
 
 ## Controls
