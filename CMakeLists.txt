@@ -4,7 +4,7 @@ project(EscapeOut)
 
 # Source files
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libraries")
+set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 file(GLOB SOURCES "${SRC_DIR}/*.cpp")
 
 # Executable definition and properties
